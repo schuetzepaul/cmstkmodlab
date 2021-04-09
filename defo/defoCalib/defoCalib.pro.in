@@ -27,7 +27,7 @@ macx {
 }
 
 CONFIG += link_pkgconfig
-PKGCONFIG += opencv exiv2 libgphoto2
+PKGCONFIG += opencv4 exiv2 libgphoto2
 
 CONFIG+=c++17
 QMAKE_CXXFLAGS += -std=c++17

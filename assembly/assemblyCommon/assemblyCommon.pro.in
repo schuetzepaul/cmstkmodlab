@@ -34,7 +34,7 @@ equals(NOUEYE,"X0") {
 }
 
 CONFIG += link_pkgconfig
-PKGCONFIG += opencv
+PKGCONFIG += opencv4
 
 QMAKE = @qmake@
 

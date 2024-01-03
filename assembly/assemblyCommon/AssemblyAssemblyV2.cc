@@ -16,6 +16,8 @@
 #include <AssemblyAssemblyV2.h>
 #include <AssemblyUtilities.h>
 
+#include <MattermostBot.h>
+
 #include <string>
 
 #include <QMessageBox>
@@ -1822,6 +1824,12 @@ void AssemblyAssemblyV2::AssemblyCompleted_start()
   msgBox->setDefaultButton(QMessageBox::Ok);
 
   int ret = msgBox->exec();
+
+  MattermostBot bot("main");
+
+  bot.postMessage("Assembly completed!");
+
+
 
   NQLog("AssemblyAssemblyV2", NQLog::Spam) << "AssemblyCompleted_start called - no action taken";
 

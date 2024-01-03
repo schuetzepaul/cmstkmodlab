@@ -27,7 +27,7 @@ MattermostBot::MattermostBot(std::string config_alias, QObject *parent)
     webhook_(),
     config_alias_(config_alias)
 {
-
+  config_ = ApplicationConfig::instance();
 }
 
 MattermostBot::MattermostBot(QString channel, std::string config_alias, QObject *parent)
@@ -35,7 +35,7 @@ MattermostBot::MattermostBot(QString channel, std::string config_alias, QObject 
     channel_(channel),
     config_alias_(config_alias)
 {
-
+  config_ = ApplicationConfig::instance();
 }
 
 MattermostBot::MattermostBot(QString channel, QString username, std::string config_alias, QObject *parent)
@@ -44,7 +44,7 @@ MattermostBot::MattermostBot(QString channel, QString username, std::string conf
     username_(username),
     config_alias_(config_alias)
 {
-
+  config_ = ApplicationConfig::instance();
 }
 
 MattermostBot::MattermostBot(QString channel, QString username, QString webhook, std::string config_alias, QObject *parent)
@@ -96,7 +96,7 @@ void MattermostBot::postMessage(const QString& message)
   std::string data = "payload={\"channel\": \"";
 
   if (channel_.isNull()) {
-    data += config_->getValue(config_alias_, "mattermostchannel");
+    data += config_->getValue<std::string>(config_alias_, "mattermostchannel");
   } else {
     data += channel_.toStdString();
   }
@@ -104,7 +104,7 @@ void MattermostBot::postMessage(const QString& message)
   data += "\", \"username\": \"";
 
   if (username_.isNull()) {
-    data += config_->getValue(config_alias_, "mattermostusername");
+    data += config_->getValue<std::string>(config_alias_, "mattermostusername");
   } else {
     data += username_.toStdString();
   }
@@ -115,7 +115,7 @@ void MattermostBot::postMessage(const QString& message)
 
   std::string webhook;
   if (webhook_.isNull()) {
-    webhook = config_->getValue(config_alias_, "mattermostwebhook");
+    webhook = config_->getValue<std::string>(config_alias_, "mattermostwebhook");
   } else {
     webhook = webhook_.toStdString();
   }

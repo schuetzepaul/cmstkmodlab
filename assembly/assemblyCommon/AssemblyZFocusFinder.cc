@@ -101,9 +101,14 @@ void AssemblyZFocusFinder::enable_motion()
     {
       connect(this, SIGNAL(focus(double, double, double, double)), motion_manager_, SLOT(moveRelative(double, double, double, double)));
 
-      connect(motion_manager_, SIGNAL(motion_finished()), camera_manager_, SLOT(acquireImage()));
+      //connect(motion_manager_, SIGNAL(motion_finished()), camera_manager_, SLOT(acquireImage()));
+      connect(motion_manager_, SIGNAL(motion_finished()), this, SLOT(motion_finished_to_acquire_slot()));
+      connect(this, SIGNAL(motion_finished_to_acquire_signal()), camera_manager_, SLOT(acquireImage()));
 
-      connect(camera_manager_, SIGNAL(imageAcquired(cv::Mat)), this, SLOT(process_image(cv::Mat)));
+      //connect(camera_manager_, SIGNAL(imageAcquired(cv::Mat)), this, SLOT(process_image(cv::Mat)));
+      connect(camera_manager_, SIGNAL(imageAcquired(cv::Mat)), this, SLOT(image_acquired_to_process_image_slot(cv::Mat)));
+      connect(this, SIGNAL(image_acquired_to_process_image_signal(cv::Mat)), this, SLOT(process_image(cv::Mat)));
+
 
       motion_enabled_ = true;
 
@@ -114,15 +119,42 @@ void AssemblyZFocusFinder::enable_motion()
     return;
 }
 
+void AssemblyZFocusFinder::motion_finished_to_acquire_slot()
+{
+    time_focus_to_motion_finished_end_ = std::chrono::system_clock::now();
+    NQLog("AssemblyZFocusFinder", NQLog::Warning) << "focus->motionFinished: "
+        << std::chrono::duration_cast<std::chrono::milliseconds>(time_focus_to_motion_finished_end_ - time_focus_to_motion_finished_start_).count() << " ms";
+
+    emit motion_finished_to_acquire_signal();
+
+    time_acquire_to_acquired_start_ = std::chrono::system_clock::now();
+}
+
+void AssemblyZFocusFinder::image_acquired_to_process_image_slot(const cv::Mat& mat)
+{
+    time_acquire_to_acquired_end_ = std::chrono::system_clock::now();
+    NQLog("AssemblyZFocusFinder", NQLog::Warning) << "acquire->acquired: "
+        << std::chrono::duration_cast<std::chrono::milliseconds>(time_acquire_to_acquired_end_ - time_acquire_to_acquired_start_).count() << " ms";
+
+    emit image_acquired_to_process_image_signal(mat);
+
+    time_process_to_focus_start_ = std::chrono::system_clock::now();
+}
+
+
 void AssemblyZFocusFinder::disable_motion()
 {
     if(motion_enabled_ == true)
     {
       disconnect(this, SIGNAL(focus(double, double, double, double)), motion_manager_, SLOT(moveRelative(double, double, double, double)));
 
-      disconnect(motion_manager_, SIGNAL(motion_finished()), camera_manager_, SLOT(acquireImage()));
+      //disconnect(motion_manager_, SIGNAL(motion_finished()), camera_manager_, SLOT(acquireImage()));
+      disconnect(motion_manager_, SIGNAL(motion_finished()), this, SLOT(motion_finished_to_acquire_slot()));
+      disconnect(this, SIGNAL(motion_finished_to_acquire_signal()), camera_manager_, SLOT(acquireImage()));
 
-      disconnect(camera_manager_, SIGNAL(imageAcquired(cv::Mat)), this, SLOT(process_image(cv::Mat)));
+      //disconnect(camera_manager_, SIGNAL(imageAcquired(cv::Mat)), this, SLOT(process_image(cv::Mat)));
+      disconnect(camera_manager_, SIGNAL(imageAcquired(cv::Mat)), this, SLOT(image_acquired_to_process_image_slot(cv::Mat)));
+      disconnect(this, SIGNAL(image_acquired_to_process_image_signal(cv::Mat)), this, SLOT(process_image(cv::Mat)));
 
       motion_enabled_ = false;
 
@@ -297,7 +329,17 @@ void AssemblyZFocusFinder::test_focus()
     NQLog("AssemblyZFocusFinder", NQLog::Spam) << "test_focus"
        << ": emitting signal \"focus(0, 0, " << dz << ", 0)\"";
 
+    time_process_to_focus_end_ = std::chrono::system_clock::now();
+    NQLog("AssemblyZFocusFinder", NQLog::Warning) << "process->focus: "
+        << std::chrono::duration_cast<std::chrono::milliseconds>(time_process_to_focus_end_ - time_process_to_focus_start_).count() << " ms";
+
     emit focus(0., 0., dz, 0.);
+    time_focus_to_motion_finished_start_ = std::chrono::system_clock::now();
+
+    time_full_cycle_ = std::chrono::system_clock::now();
+    NQLog("AssemblyZFocusFinder", NQLog::Warning) << "Full cycle: "
+        << std::chrono::duration_cast<std::chrono::milliseconds>(time_full_cycle_ - previous_time_full_cycle_).count() << " ms";
+    previous_time_full_cycle_ = time_full_cycle_;
 
     emit sig_update_progBar(int(zrelm_index_*100./v_zrelm_vals_.size())); //Update progress bar display
   }

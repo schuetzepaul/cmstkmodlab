@@ -22,6 +22,8 @@
 #include <vector>
 #include <string>
 
+#include <chrono>
+
 #include <opencv2/opencv.hpp>
 
 class AssemblyZFocusFinder : public QObject
@@ -62,6 +64,12 @@ class AssemblyZFocusFinder : public QObject
     double focus_zrange_;
     double focus_stepsize_min_;
 
+    std::chrono::_V2::system_clock::time_point previous_time_full_cycle_;
+    std::chrono::_V2::system_clock::time_point time_full_cycle_;
+    std::chrono::_V2::system_clock::time_point time_process_to_focus_start_, time_process_to_focus_end_;
+    std::chrono::_V2::system_clock::time_point time_acquire_to_acquired_start_, time_acquire_to_acquired_end_;
+    std::chrono::_V2::system_clock::time_point time_focus_to_motion_finished_start_, time_focus_to_motion_finished_end_;
+
     double zposi_init_;
 
     int zrelm_index_;
@@ -88,7 +96,13 @@ class AssemblyZFocusFinder : public QObject
 
     void emergencyStop();
 
+    void motion_finished_to_acquire_slot();
+    void image_acquired_to_process_image_slot(const cv::Mat& mat);
+
   signals:
+
+    void motion_finished_to_acquire_signal();
+    void image_acquired_to_process_image_signal(cv::Mat);
 
     void next_zpoint();
 

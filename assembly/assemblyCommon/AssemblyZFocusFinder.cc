@@ -101,13 +101,14 @@ void AssemblyZFocusFinder::enable_motion()
     {
       connect(this, SIGNAL(focus(double, double, double, double)), motion_manager_, SLOT(moveRelative(double, double, double, double)));
 
-      //connect(motion_manager_, SIGNAL(motion_finished()), camera_manager_, SLOT(acquireImage()));
-      connect(motion_manager_, SIGNAL(motion_finished()), this, SLOT(motion_finished_to_acquire_slot()));
-      connect(this, SIGNAL(motion_finished_to_acquire_signal()), camera_manager_, SLOT(acquireImage()));
+      connect(motion_manager_, SIGNAL(motion_finished()), camera_manager_, SLOT(acquireImage()));
+      //connect(motion_manager_, SIGNAL(motion_finished()), this, SLOT(motion_finished_to_acquire_slot()));
+      //connect(this, SIGNAL(motion_finished_to_acquire_signal()), camera_manager_, SLOT(acquireImage()));
 
-      //connect(camera_manager_, SIGNAL(imageAcquired(cv::Mat)), this, SLOT(process_image(cv::Mat)));
-      connect(camera_manager_, SIGNAL(imageAcquired(cv::Mat)), this, SLOT(image_acquired_to_process_image_slot(cv::Mat)));
-      connect(this, SIGNAL(image_acquired_to_process_image_signal(cv::Mat)), this, SLOT(process_image(cv::Mat)));
+      connect(camera_manager_, SIGNAL(imageAcquired(cv::Mat)), this, SLOT(process_image(cv::Mat)));
+      //connect(camera_manager_, SIGNAL(imageAcquired(cv::Mat)), this, SLOT(image_acquired_to_process_image_slot(cv::Mat)));
+      //connect(this, SIGNAL(image_acquired_to_process_image_signal(cv::Mat)), this, SLOT(process_image(cv::Mat)));
+      connect(camera_manager_, SIGNAL(imageAcquired(cv::Mat)), this, SLOT(move_to_next_zstep(cv::Mat)));
 
 
       motion_enabled_ = true;
@@ -141,6 +142,16 @@ void AssemblyZFocusFinder::image_acquired_to_process_image_slot(const cv::Mat& m
     time_process_to_focus_start_ = std::chrono::system_clock::now();
 }
 
+void AssemblyZFocusFinder::move_to_next_zstep(cv::Mat)
+{
+    auto get_position_time_start = std::chrono::system_clock::now();
+
+    current_z_position_ = motion_manager_->get_position_Z();
+    auto get_position_time_end = std::chrono::system_clock::now();
+    NQLog("AssemblyZFocusFinder", NQLog::Warning) << "getPosition: "
+    << std::chrono::duration_cast<std::chrono::milliseconds>(get_position_time_end - get_position_time_start).count() << " ms";
+    emit next_zpoint();
+}
 
 void AssemblyZFocusFinder::disable_motion()
 {
@@ -148,13 +159,13 @@ void AssemblyZFocusFinder::disable_motion()
     {
       disconnect(this, SIGNAL(focus(double, double, double, double)), motion_manager_, SLOT(moveRelative(double, double, double, double)));
 
-      //disconnect(motion_manager_, SIGNAL(motion_finished()), camera_manager_, SLOT(acquireImage()));
-      disconnect(motion_manager_, SIGNAL(motion_finished()), this, SLOT(motion_finished_to_acquire_slot()));
-      disconnect(this, SIGNAL(motion_finished_to_acquire_signal()), camera_manager_, SLOT(acquireImage()));
+      disconnect(motion_manager_, SIGNAL(motion_finished()), camera_manager_, SLOT(acquireImage()));
+      //disconnect(motion_manager_, SIGNAL(motion_finished()), this, SLOT(motion_finished_to_acquire_slot()));
+      //disconnect(this, SIGNAL(motion_finished_to_acquire_signal()), camera_manager_, SLOT(acquireImage()));
 
-      //disconnect(camera_manager_, SIGNAL(imageAcquired(cv::Mat)), this, SLOT(process_image(cv::Mat)));
-      disconnect(camera_manager_, SIGNAL(imageAcquired(cv::Mat)), this, SLOT(image_acquired_to_process_image_slot(cv::Mat)));
-      disconnect(this, SIGNAL(image_acquired_to_process_image_signal(cv::Mat)), this, SLOT(process_image(cv::Mat)));
+      disconnect(camera_manager_, SIGNAL(imageAcquired(cv::Mat)), this, SLOT(process_image(cv::Mat)));
+      //disconnect(camera_manager_, SIGNAL(imageAcquired(cv::Mat)), this, SLOT(image_acquired_to_process_image_slot(cv::Mat)));
+      //disconnect(this, SIGNAL(image_acquired_to_process_image_signal(cv::Mat)), this, SLOT(process_image(cv::Mat)));
 
       motion_enabled_ = false;
 
@@ -535,9 +546,9 @@ void AssemblyZFocusFinder::process_image(const cv::Mat& img)
 
       // go to next z-focus step
       NQLog("AssemblyZFocusFinder", NQLog::Spam) << "process_image"
-         << ": emitting signal \"next_zpoint\"";
+         << ": NOT emitting signal \"next_zpoint\"";
 
-      emit next_zpoint();
+      //emit next_zpoint();
       // ------------------------------
     }
   }

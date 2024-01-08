@@ -74,6 +74,8 @@ class AssemblyZFocusFinder : public QObject
 
     int zrelm_index_;
 
+    double current_z_position_;
+
     std::string output_dir_;
 
     std::vector<double>     v_zrelm_vals_;
@@ -98,6 +100,7 @@ class AssemblyZFocusFinder : public QObject
 
     void motion_finished_to_acquire_slot();
     void image_acquired_to_process_image_slot(const cv::Mat& mat);
+    void move_to_next_zstep(cv::Mat);
 
   signals:
 

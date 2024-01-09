@@ -10,8 +10,8 @@
 //                                                                             //
 /////////////////////////////////////////////////////////////////////////////////
 
-#ifndef ASSEMBLYZFOCUSFINDERV2_H
-#define ASSEMBLYZFOCUSFINDERV2_H
+#ifndef ASSEMBLYZFocusFinder_H
+#define ASSEMBLYZFocusFinder_H
 
 #include <AssemblyVUEyeCamera.h>
 #include <LStepExpressMotionManager.h>
@@ -52,13 +52,13 @@ Q_OBJECT
     cv::Mat mat_;
 };
 
-class AssemblyZFocusFinderV2 : public QThread
+class AssemblyZFocusFinder : public QThread
 {
  Q_OBJECT
 
   public:
 
-    AssemblyZFocusFinderV2(const AssemblyVUEyeCamera*, const LStepExpressMotionManager*, QObject* parent=nullptr);
+    AssemblyZFocusFinder(const AssemblyVUEyeCamera*, const LStepExpressMotionManager*, QObject* parent=nullptr);
 
     const AssemblyVUEyeCamera*       camera_manager() const { return camera_manager_; }
     const LStepExpressMotionManager* motion_manager() const { return motion_manager_; }
@@ -118,4 +118,4 @@ class AssemblyZFocusFinderV2 : public QThread
     void sig_update_progBar(int);
 
 };
-#endif // ASSEMBLYZFOCUSFINDERV2_H
+#endif // ASSEMBLYZFocusFinder_H

@@ -69,6 +69,8 @@ typedef AssemblyUEyeModel AssemblyUEyeModel_t;
 #include <QTimer>
 #include <QToolBar>
 #include <QScrollArea>
+#include <QLineSeries>
+#include <QtCharts>
 
 class AssemblyMainWindow : public QMainWindow
 {

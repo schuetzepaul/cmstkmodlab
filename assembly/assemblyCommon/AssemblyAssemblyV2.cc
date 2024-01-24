@@ -1287,11 +1287,7 @@ void AssemblyAssemblyV2::MakeSpaceOnPlatform_start()
 
   const double dx0 = 0.0;
   const double dy0 = 0.0;
-<<<<<<< HEAD
-  const double dz0 = makespace_Z;
-=======
   const double dz0 = makespace_Z_;
->>>>>>> paul/decimal_makespace
   const double da0 = 0.0;
 
   if(dz0 <= 0.)
@@ -1307,14 +1303,11 @@ void AssemblyAssemblyV2::MakeSpaceOnPlatform_start()
     return;
   }
 
-<<<<<<< HEAD
-=======
   position_z_before_makespace_ = motion_->get_position_Z();
   position_z_before_makespace_stored_ = true;
   NQLog("AssemblyAssemblyV2", NQLog::Message) << "MakeSpaceOnPlatform_start"
      << ": Position of z stage before making space on the platform is " << position_z_before_makespace_;
 
->>>>>>> paul/decimal_makespace
   connect(this, SIGNAL(move_relative_request(double, double, double, double)), motion_, SLOT(moveRelative(double, double, double, double)));
   connect(motion_, SIGNAL(motion_finished()), this, SLOT(MakeSpaceOnPlatform_finish()));
 
@@ -1358,11 +1351,6 @@ void AssemblyAssemblyV2::ReturnToPlatform_start()
     return;
   }
 
-<<<<<<< HEAD
-  const double dx0 = 0.0;
-  const double dy0 = 0.0;
-  const double dz0 = -makespace_Z;
-=======
   if(!position_z_before_makespace_stored_)
   {
     NQLog("AssemblyAssemblyV2", NQLog::Warning) << "ReturnToPlatform_start"
@@ -1377,7 +1365,6 @@ void AssemblyAssemblyV2::ReturnToPlatform_start()
   const double dx0 = 0.0;
   const double dy0 = 0.0;
   const double dz0 = position_z_before_makespace_ - motion_->get_position_Z();
->>>>>>> paul/decimal_makespace
   const double da0 = 0.0;
 
   if(dz0 >= 0.)

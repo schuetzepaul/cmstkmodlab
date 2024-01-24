@@ -167,6 +167,8 @@ class AssemblyAssemblyV2 : public QObject
 
   // others
 
+  void ScanMaPSAID_start();
+
   void RegisterPSSPlusSpacersToMaPSAPosition_start();
   void RegisterPSSPlusSpacersToMaPSAPosition_finish();
 
@@ -179,6 +181,8 @@ class AssemblyAssemblyV2 : public QObject
   // motion
   void move_absolute_request(const double, const double, const double, const double);
   void move_relative_request(const double, const double, const double, const double);
+
+  void ScanMaPSAID_finished();
 
   void GoToSensorMarkerPreAlignment_finished();
 

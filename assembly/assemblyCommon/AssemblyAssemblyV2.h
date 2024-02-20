@@ -68,6 +68,8 @@ class AssemblyAssemblyV2 : public QObject
 
   assembly::Center assembly_center_;
 
+  assembly::Center assembly_center_;
+
  public:
   assembly::Center GetAssemblyCenter() const {return assembly_center_;};
 

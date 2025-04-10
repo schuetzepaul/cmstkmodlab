@@ -58,9 +58,6 @@ typedef AssemblyUEyeModel AssemblyUEyeModel_t;
 #include <LStepExpressStatusWindow.h>
 #include <VRelayCardModel.h>
 #include <RelayCardManager.h>
-#include <AssemblyDBLoggerModel.h>
-#include <AssemblyDBLoggerController.h>
-#include <AssemblyDBLoggerView.h>
 #include <Metrology.h>
 #include <MetrologyView.h>
 
@@ -81,7 +78,7 @@ class AssemblyMainWindow : public QMainWindow
 
  public:
 
-  explicit AssemblyMainWindow(const QString& outputdir_path, const QString& logfile_path, const QString& DBlogfile_path, QWidget* parent=nullptr);
+  explicit AssemblyMainWindow(const QString& outputdir_path, const QString& logfile_path, QWidget* parent=nullptr);
   virtual ~AssemblyMainWindow()
   {
       disconnect_otherSlots();
@@ -111,9 +108,6 @@ class AssemblyMainWindow : public QMainWindow
   void disconnect_otherSlots();
 
   void testTimer();
-
-  void connect_DBLogger();
-  void writeDBLog_emergencyStop();
 
   void displayInfo_activeTab();
 
@@ -150,8 +144,6 @@ class AssemblyMainWindow : public QMainWindow
   void metrology_disconnected();
 
   void multiPickupTest_disconnected();
-
-  void DBLogMessage(const QString);
 
   void display_info();
 
@@ -229,10 +221,6 @@ class AssemblyMainWindow : public QMainWindow
   AssemblyToolboxView* toolbox_view_;
   AssemblyParametersView* params_view_;
   AssemblyHardwareControlView* hwctr_view_;
-
-  AssemblyDBLoggerModel* DBLog_model_;
-  AssemblyDBLoggerController* DBLog_ctrl_;
-  AssemblyDBLoggerView* DBLog_view_;
 
   QPushButton* button_mainEmergencyStop_;
   QPushButton* button_info_;

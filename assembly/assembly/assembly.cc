@@ -62,21 +62,11 @@ int main(int argc, char** argv)
 
     parser.addOptions({
         {{"g", "glass"},
-	 QCoreApplication::translate("main", "Use configuration for glass assembly")},
-	{{"s", "silicon"},
-	 QCoreApplication::translate("main", "Use configuration for silicon assembly")}
+	 QCoreApplication::translate("main", "Use configuration for glass assembly (default: silicon)")},
       }
       );
 
     parser.process(app);
-
-    // ensure that either glass or silicon is specified
-    if(parser.isSet("glass") + parser.isSet("silicon") != 1)
-    {
-      std::cout << "Please specify the use of either glass or silicon via -g (--glass) or -s (--silicon)!" << std::endl << std::endl;
-      parser.showHelp(1);
-      exit(1);
-    }
 
     // choose configuration file
     auto relative_config_path = "/assembly/assembly_SiDummyPS.cfg";

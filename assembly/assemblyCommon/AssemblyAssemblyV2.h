@@ -176,7 +176,10 @@ class AssemblyAssemblyV2 : public QObject
   void ScanGlue2ID_start();
   void ScanGlue3ID_start();
   void ScanModuleID_start();
-  void PushToDB_start();
+  void PushAllToDB_start();
+  void PushStep1ToDB_start();
+  void PushStep2ToDB_start();
+  void PushStep3ToDB_start();
 
   void Update_Baseplate_ID(QString ID) {Baseplate_ID_ = ID;};
   void Update_MaPSA_ID(QString ID) {MaPSA_ID_ = ID;};
@@ -206,7 +209,10 @@ class AssemblyAssemblyV2 : public QObject
   void ScanGlue2ID_finished();
   void ScanGlue3ID_finished();
   void ScanModuleID_finished();
-  void PushToDB_finished();
+  void PushAllToDB_finished();
+  void PushStep1ToDB_finished();
+  void PushStep2ToDB_finished();
+  void PushStep3ToDB_finished();
 
   void ScanMaPSAID_aborted();
   void ScanBaseplateID_aborted();
@@ -215,7 +221,10 @@ class AssemblyAssemblyV2 : public QObject
   void ScanGlue2ID_aborted();
   void ScanGlue3ID_aborted();
   void ScanModuleID_aborted();
-  void PushToDB_aborted();
+  void PushAllToDB_aborted();
+  void PushStep1ToDB_aborted();
+  void PushStep2ToDB_aborted();
+  void PushStep3ToDB_aborted();
 
   void GoToSensorMarkerPreAlignment_finished();
 

@@ -65,6 +65,8 @@ add_library(AssemblyCommon SHARED
         AssemblyDBLoggerController.cc
         AssemblyDBLoggerModel.cc
         AssemblyDBLoggerView.cc
+        VDatabase.cc
+        DatabaseDummy.cc
 )
 
 if(CMSTKMODLAB_FAKEUEYE)

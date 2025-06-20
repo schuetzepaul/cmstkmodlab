@@ -181,6 +181,8 @@ class AssemblyAssemblyV2 : public QObject
   void ScanGlue2ID_start();
   void ScanGlue3ID_start();
   void ScanModuleID_start();
+
+  void RegisterModuleID_start();
   void PushAllToDB_start();
   void PushStep1ToDB_start();
   void PushStep2ToDB_start();
@@ -214,6 +216,8 @@ class AssemblyAssemblyV2 : public QObject
   void ScanGlue2ID_finished();
   void ScanGlue3ID_finished();
   void ScanModuleID_finished();
+
+  void RegisterModuleID_finished();
   void PushAllToDB_finished();
   void PushStep1ToDB_finished();
   void PushStep2ToDB_finished();
@@ -226,6 +230,8 @@ class AssemblyAssemblyV2 : public QObject
   void ScanGlue2ID_aborted();
   void ScanGlue3ID_aborted();
   void ScanModuleID_aborted();
+
+  void RegisterModuleID_aborted();
   void PushAllToDB_aborted();
   void PushStep1ToDB_aborted();
   void PushStep2ToDB_aborted();

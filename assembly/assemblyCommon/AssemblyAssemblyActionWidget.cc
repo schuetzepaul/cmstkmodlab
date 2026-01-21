@@ -50,9 +50,9 @@ AssemblyAssemblyActionWidget::AssemblyAssemblyActionWidget(QWidget* parent)
 
   connect(checkbox_, SIGNAL(stateChanged(int)), this, SLOT(disable(int)));
 
-  layout_->addWidget(label_,  2, Qt::AlignRight);
+  layout_->addWidget(label_,  4, Qt::AlignRight);
   layout_->addWidget(button_, 40);
-  layout_->addWidget(new QLabel, 48);
+  layout_->addWidget(new QLabel, 46);
   layout_->addWidget(checkbox_, 10);
 }
 
@@ -87,14 +87,25 @@ void AssemblyAssemblyActionWidget::disable(const int state)
     }
     label_->setEnabled(false);
     button_->setEnabled(false);
+
+    checkbox_->blockSignals(true);
+    checkbox_->setCheckState(Qt::Checked);
+    checkbox_->blockSignals(false);
   }
   else if(state == 0)
   {
     label_->setEnabled(true);
     button_->setEnabled(true);
+
+    checkbox_->setCheckState(Qt::Unchecked);
   }
 
   return;
+}
+
+void AssemblyAssemblyActionWidget::disableSilently(){
+    inhibit_dialogue_ = true;
+    disable(2);
 }
 
 void AssemblyAssemblyActionWidget::connect_action(const QObject* qobject, const char* start_slot, const char* stop_signal, const char* abort_signal)
@@ -182,4 +193,16 @@ void AssemblyAssemblyActionWidget::abort_action()
     NQLog("AssemblyAssemblyActionWidget", NQLog::Warning) << "abort_action"
        << ": invalid (NULL) pointer to QObject, no action taken";
   }
+}
+
+void AssemblyAssemblyActionWidget::set_belongs_to_group(const bool grouped){
+    belongs_to_group_ = grouped;
+
+    if(belongs_to_group_){
+        label_->setStyleSheet("QLabel { font-weight : normal; }");
+    } else {
+        label_->setStyleSheet("QLabel { font-weight : bold; }");
+    }
+
+
 }

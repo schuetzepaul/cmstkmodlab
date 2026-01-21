@@ -40,9 +40,9 @@ AssemblyAssemblyTextWidget::AssemblyAssemblyTextWidget(QWidget* parent)
 
   connect(checkbox_, SIGNAL(stateChanged(int)), this, SLOT(disable(int)));
 
-  layout_->addWidget(label_, 2, Qt::AlignRight);
+  layout_->addWidget(label_, 4, Qt::AlignRight);
   layout_->addWidget(text_, 40);
-  layout_->addWidget(new QLabel, 48);
+  layout_->addWidget(new QLabel, 46);
   layout_->addWidget(checkbox_, 10);
   // --------------
 }

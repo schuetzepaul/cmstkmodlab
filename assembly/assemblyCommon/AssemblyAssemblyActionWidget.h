@@ -35,6 +35,12 @@ class AssemblyAssemblyActionWidget : public QWidget
 
   void connect_action(const QObject*, const char*, const char*, const char* = nullptr);
 
+  void set_belongs_to_group(const bool);
+
+  const char* stop_signal() const {return stop_signal_;}
+
+  void disableSilently();
+  
  protected:
   QHBoxLayout* layout_;
 
@@ -48,6 +54,8 @@ class AssemblyAssemblyActionWidget : public QWidget
   const char* abort_signal_;
 
   bool inhibit_dialogue_;
+
+  bool belongs_to_group_;
 
  public slots:
   void disable(const bool b=true);

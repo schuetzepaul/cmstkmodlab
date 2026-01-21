@@ -21,6 +21,8 @@
 #include <QPushButton>
 
 #include <AssemblyAssemblyActionWidget.h>
+#include <AssemblyAssemblyActionWidgetGroup.h>
+
 
 class AssemblyAssemblyV2View : public QWidget
 {

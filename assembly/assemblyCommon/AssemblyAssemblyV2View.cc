@@ -209,31 +209,51 @@ AssemblyAssemblyV2View::AssemblyAssemblyV2View(const AssemblyAssemblyV2* const a
   }
   // ----------
 
-  // step: Go To Measurement Position on MaPSA
   {
-    ++assembly_step_N;
+    AssemblyAssemblyActionWidgetGroup* tmp_group = new AssemblyAssemblyActionWidgetGroup;
+    tmp_group->button()->setText("Go to Measurement Position and enable Vacuum on MaPSA");
 
-    AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
-    tmp_wid->label()->setText(QString::number(assembly_step_N));
-    tmp_wid->button()->setText("Go To Measurement Position on MaPSA");
-    PSPToBasep_lay->addWidget(tmp_wid);
+    int step_start = assembly_step_N + 1;
+    {
+      ++assembly_step_N;
 
-    tmp_wid->connect_action(assembly, SLOT(GoToPSPSensorMarkerPreAlignment_start()), SIGNAL(GoToSensorMarkerPreAlignment_finished()));
+      AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
+      tmp_wid->label()->setText(QString::number(assembly_step_N));
+      tmp_wid->button()->setText("Go To Measurement Position on MaPSA");
+
+      int n_action_vector = tmp_group->add_action(tmp_wid);
+      if(n_action_vector != assembly_step_N-step_start+1){
+          NQLog("AssemblyAssemblyViewV2", NQLog::Fatal) << "Length of group's action vector (" << n_action_vector <<
+          ") does not match expectation (" << assembly_step_N-step_start+1 << ")";
+      }
+
+      tmp_wid->connect_action(assembly, SLOT(GoToPSPSensorMarkerPreAlignment_start()), SIGNAL(GoToSensorMarkerPreAlignment_finished()));
+    }
+    // ----------
+
+    // step: Enable Vacuum on MaPSA
+    {
+      ++assembly_step_N;
+
+      AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
+      tmp_wid->label()->setText(QString::number(assembly_step_N));
+      tmp_wid->button()->setText("Enable Vacuum on MaPSA");
+
+      int n_action_vector = tmp_group->add_action(tmp_wid);
+      if(n_action_vector != assembly_step_N-step_start+1){
+          NQLog("AssemblyAssemblyViewV2", NQLog::Fatal) << "Length of group's action vector (" << n_action_vector <<
+          ") does not match expectation (" << assembly_step_N-step_start+1 << ")";
+      }
+
+      tmp_wid->connect_action(assembly, SLOT(EnableVacuumBaseplate_start()), SIGNAL(EnableVacuumBaseplate_finished()));
+    }
+    // ----------
+
+  tmp_group->label()->setText(QString::number(step_start) + " - " + QString::number(assembly_step_N));
+  PSPToBasep_lay->addWidget(tmp_group);
+  tmp_group->connect_group(assembly, SLOT(MaPSAGoToMeasurementPointAndEnableVacuum_start()), SIGNAL(MaPSAGoToMeasurementPointAndEnableVacuum_start()));
+
   }
-  // ----------
-
-  // step: Enable Vacuum on MaPSA
-  {
-    ++assembly_step_N;
-
-    AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
-    tmp_wid->label()->setText(QString::number(assembly_step_N));
-    tmp_wid->button()->setText("Enable Vacuum on MaPSA");
-    PSPToBasep_lay->addWidget(tmp_wid);
-
-    tmp_wid->connect_action(assembly, SLOT(EnableVacuumBaseplate_start()), SIGNAL(EnableVacuumBaseplate_finished()));
-  }
-  // ----------
 
   // step: Align MaPSA to Motion Stage
   {
@@ -251,70 +271,105 @@ AssemblyAssemblyV2View::AssemblyAssemblyV2View(const AssemblyAssemblyV2* const a
   }
   // ----------
 
-  // step: Go From Sensor Marker Ref-Point to Pickup XY
   {
-    ++assembly_step_N;
+      AssemblyAssemblyActionWidgetGroup* tmp_group = new AssemblyAssemblyActionWidgetGroup;
+      tmp_group->button()->setText("Start MaPSA Pickup Procedure");
 
-    AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
-    tmp_wid->label()->setText(QString::number(assembly_step_N));
-    tmp_wid->button()->setText("Go From Sensor Marker Ref-Point to Pickup XY");
-    PSPToBasep_lay->addWidget(tmp_wid);
+      int step_start = assembly_step_N + 1;
+      // step: Go From Sensor Marker Ref-Point to Pickup XY
+      {
+          ++assembly_step_N;
 
-    tmp_wid->connect_action(assembly, SLOT(GoFromSensorMarkerToPickupXY_start()), SIGNAL(GoFromSensorMarkerToPickupXY_finished()));
+          AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
+          tmp_wid->label()->setText(QString::number(assembly_step_N));
+          tmp_wid->button()->setText("Go From Sensor Marker Ref-Point to Pickup XY");
+
+          int n_action_vector = tmp_group->add_action(tmp_wid);
+          if(n_action_vector != assembly_step_N-step_start+1){
+              NQLog("AssemblyAssemblyViewV2", NQLog::Fatal) << "Length of group's action vector (" << n_action_vector <<
+              ") does not match expectation (" << assembly_step_N-step_start+1 << ")";
+          }
+
+          tmp_wid->connect_action(assembly, SLOT(GoFromSensorMarkerToPickupXY_start()), SIGNAL(GoFromSensorMarkerToPickupXY_finished()));
+      }
+      // ----------
+
+      // step: Lower Pickup-Tool onto MaPSA
+      {
+          ++assembly_step_N;
+
+          AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
+          tmp_wid->label()->setText(QString::number(assembly_step_N));
+          tmp_wid->button()->setText("Lower Pickup-Tool onto MaPSA");
+
+          int n_action_vector = tmp_group->add_action(tmp_wid);
+          if(n_action_vector != assembly_step_N-step_start+1){
+              NQLog("AssemblyAssemblyViewV2", NQLog::Fatal) << "Length of group's action vector (" << n_action_vector <<
+              ") does not match expectation (" << assembly_step_N-step_start+1 << ")";
+          }
+
+          tmp_wid->connect_action(assembly, SLOT(LowerPickupToolOntoMaPSA_start()), SIGNAL(LowerPickupToolOntoMaPSA_finished()));
+      }
+      // ----------
+
+      // step: Enable Vacuum on Pickup-Tool
+      {
+          ++assembly_step_N;
+
+          AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
+          tmp_wid->label()->setText(QString::number(assembly_step_N));
+          tmp_wid->button()->setText("Enable Vacuum on Pickup-Tool");
+
+          int n_action_vector = tmp_group->add_action(tmp_wid);
+          if(n_action_vector != assembly_step_N-step_start+1){
+              NQLog("AssemblyAssemblyViewV2", NQLog::Fatal) << "Length of group's action vector (" << n_action_vector <<
+              ") does not match expectation (" << assembly_step_N-step_start+1 << ")";
+          }
+
+          tmp_wid->connect_action(assembly, SLOT(EnableVacuumPickupTool_start()), SIGNAL(EnableVacuumPickupTool_finished()));
+      }
+      // ----------
+
+      // step: Disable Vacuum on MaPSA
+      {
+          ++assembly_step_N;
+
+          AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
+          tmp_wid->label()->setText(QString::number(assembly_step_N));
+          tmp_wid->button()->setText("Disable Vacuum on MaPSA");
+
+          int n_action_vector = tmp_group->add_action(tmp_wid);
+          if(n_action_vector != assembly_step_N-step_start+1){
+              NQLog("AssemblyAssemblyViewV2", NQLog::Fatal) << "Length of group's action vector (" << n_action_vector <<
+              ") does not match expectation (" << assembly_step_N-step_start+1 << ")";
+          }
+
+          tmp_wid->connect_action(assembly, SLOT(DisableVacuumBaseplate_start()), SIGNAL(DisableVacuumBaseplate_finished()));
+      }
+      // ----------
+
+      // step: Pick Up MaPSA
+      {
+          ++assembly_step_N;
+
+          AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
+          tmp_wid->label()->setText(QString::number(assembly_step_N));
+          tmp_wid->button()->setText("Pick Up MaPSA");
+
+          int n_action_vector = tmp_group->add_action(tmp_wid);
+          if(n_action_vector != assembly_step_N-step_start+1){
+              NQLog("AssemblyAssemblyViewV2", NQLog::Fatal) << "Length of group's action vector (" << n_action_vector <<
+              ") does not match expectation (" << assembly_step_N-step_start+1 << ")";
+          }
+
+          tmp_wid->connect_action(assembly, SLOT(PickupMaPSA_start()), SIGNAL(PickupMaPSA_finished()));
+      }
+      // ----------
+
+      tmp_group->label()->setText(QString::number(step_start) + " - " + QString::number(assembly_step_N));
+      PSPToBasep_lay->addWidget(tmp_group);
+      tmp_group->connect_group(assembly, SLOT(MaPSAPickupProcedure_start()), SIGNAL(MaPSAPickupProcedure_start()));
   }
-  // ----------
-
-  // step: Lower Pickup-Tool onto MaPSA
-  {
-    ++assembly_step_N;
-
-    AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
-    tmp_wid->label()->setText(QString::number(assembly_step_N));
-    tmp_wid->button()->setText("Lower Pickup-Tool onto MaPSA");
-    PSPToBasep_lay->addWidget(tmp_wid);
-
-    tmp_wid->connect_action(assembly, SLOT(LowerPickupToolOntoMaPSA_start()), SIGNAL(LowerPickupToolOntoMaPSA_finished()));
-  }
-  // ----------
-
-  // step: Enable Vacuum on Pickup-Tool
-  {
-    ++assembly_step_N;
-
-    AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
-    tmp_wid->label()->setText(QString::number(assembly_step_N));
-    tmp_wid->button()->setText("Enable Vacuum on Pickup-Tool");
-    PSPToBasep_lay->addWidget(tmp_wid);
-
-    tmp_wid->connect_action(assembly, SLOT(EnableVacuumPickupTool_start()), SIGNAL(EnableVacuumPickupTool_finished()));
-  }
-  // ----------
-
-  // step: Disable Vacuum on MaPSA
-  {
-    ++assembly_step_N;
-
-    AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
-    tmp_wid->label()->setText(QString::number(assembly_step_N));
-    tmp_wid->button()->setText("Disable Vacuum on MaPSA");
-    PSPToBasep_lay->addWidget(tmp_wid);
-
-    tmp_wid->connect_action(assembly, SLOT(DisableVacuumBaseplate_start()), SIGNAL(DisableVacuumBaseplate_finished()));
-  }
-  // ----------
-
-  // step: Pick Up MaPSA
-  {
-    ++assembly_step_N;
-
-    AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
-    tmp_wid->label()->setText(QString::number(assembly_step_N));
-    tmp_wid->button()->setText("Pick Up MaPSA");
-    PSPToBasep_lay->addWidget(tmp_wid);
-
-    tmp_wid->connect_action(assembly, SLOT(PickupMaPSA_start()), SIGNAL(PickupMaPSA_finished()));
-  }
-  // ----------
 
   // step: Scan Baseplate ID
   {

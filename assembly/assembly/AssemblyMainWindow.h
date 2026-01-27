@@ -160,6 +160,12 @@ class AssemblyMainWindow : public QMainWindow
 
   void messageBox_restartMotionStage();
 
+  void restore_autofocus_settings();
+
+  void disable_imageButtons(QObject*);
+
+  void enable_imageButtons(QObject*);
+
  protected:
 
   // Low-Level Controllers (Motion, Camera, Vacuum)
@@ -243,6 +249,8 @@ class AssemblyMainWindow : public QMainWindow
   int idx_alignment_tab;
   int idx_module_tab;
   int idx_manual_tab;
+
+  QList<QObject*> camera_blocking_objects_;
 };
 
 #endif // ASSEMBLYMAINWINDOW_H

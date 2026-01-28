@@ -1395,6 +1395,7 @@ void AssemblyMainWindow::disable_imageButtons(QObject* sender)
       }
     }
     image_view_->autofocus_button()->setEnabled(false);
+    aligner_view_->button_runAlignment()->setEnabled(false);
 }
 
 void AssemblyMainWindow::enable_imageButtons(QObject* sender)
@@ -1417,6 +1418,7 @@ void AssemblyMainWindow::enable_imageButtons(QObject* sender)
       }
     }
     image_view_->autofocus_button()->setEnabled(true);
+    aligner_view_->button_runAlignment()->setEnabled(true);
 }
 
 void AssemblyMainWindow::closeEvent (QCloseEvent *event)

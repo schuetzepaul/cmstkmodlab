@@ -205,12 +205,20 @@ void AssemblyAssemblyActionWidgetGroup::disable_group()
 {
   if(qobject_)
   {
-    disconnect(this, SIGNAL(group_request()), qobject_, start_slot_);
+    disconnect(qobject_, m_vec_actions.at(n_actions_performed_-1)->stop_signal(), this, SLOT(disable_group()));
 
-    disconnect(qobject_, stop_signal_, this, SLOT(disable_group()));
+    if(n_actions_performed_ > 0){
+      disconnect(this, SIGNAL(perform_action_request()), m_vec_actions.at(n_actions_performed_-1), SLOT(start_action()));
+      disconnect(qobject_, m_vec_actions.at(n_actions_performed_-1)->stop_signal(), this, SLOT(next_action()));
+    }
 
     inhibit_dialogue_ = true;
     checkbox_->setCheckState(Qt::Checked);
+
+    n_actions_performed_ = 0;
+    NQLog("AssemblyAssemblyActionWidgetGroup", NQLog::Warning) << "disable_group"
+       << ": n_actions_performed = 0";
+
   }
   else
   {

@@ -368,7 +368,7 @@ AssemblyAssemblyV2View::AssemblyAssemblyV2View(const AssemblyAssemblyV2* const a
 
       tmp_group->label()->setText(QString::number(step_start) + " - " + QString::number(assembly_step_N));
       PSPToBasep_lay->addWidget(tmp_group);
-      tmp_group->connect_group(assembly, SLOT(MaPSAPickupProcedure_start()), SIGNAL(MaPSAPickupProcedure_start()));
+      tmp_group->connect_group(assembly, SLOT(MaPSAPickupProcedure_start()), SIGNAL(MaPSAPickupProcedure_stop()));
   }
 
   // step: Scan Baseplate ID

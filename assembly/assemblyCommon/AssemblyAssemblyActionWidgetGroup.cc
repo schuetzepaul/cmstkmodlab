@@ -50,6 +50,8 @@ AssemblyAssemblyActionWidgetGroup::AssemblyAssemblyActionWidgetGroup(QWidget* pa
   connect(this->button(), SIGNAL(clicked()), this, SLOT(next_action()));
 
   checkbox_ = new QCheckBox("Done");
+  checkbox_->setTristate(true);
+  checkbox_->setCheckState(Qt::Unchecked);
   connect(checkbox_, SIGNAL(stateChanged(int)), this, SLOT(disable(int)));
 
   toggle_button_ = new QToolButton;
@@ -119,6 +121,11 @@ void AssemblyAssemblyActionWidgetGroup::disable(const int state)
     for(auto& action : m_vec_actions){
         action->disable(false);
     }
+  } else {
+    inhibit_dialogue_ = true;
+
+    label_->setEnabled(false);
+    button_->setEnabled(false);
   }
 
   return;
@@ -252,4 +259,22 @@ void AssemblyAssemblyActionWidgetGroup::toggle_view(bool checked){
     for(auto& action : m_vec_actions){
         action->setVisible(checked);
     }
+}
+
+void AssemblyAssemblyActionWidgetGroup::refresh_checkStates(int checked){
+    NQLog("AssemblyAssemblyActionWidgetGroup", NQLog::Warning) << "refresh_checkStates"
+       << ": Let's check all states!";
+
+       int actions_checked = 0;
+       for(auto& action : m_vec_actions){
+           actions_checked += (action->checkbox()->isChecked() ? 1 : 0);
+       }
+
+       if(actions_checked==m_vec_actions.size()){
+           checkbox_->setCheckState(Qt::Checked);
+       } else if(actions_checked==0){
+           checkbox_->setCheckState(Qt::Unchecked);
+       } else {
+           checkbox_->setCheckState(Qt::PartiallyChecked);
+       }
 }

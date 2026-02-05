@@ -73,6 +73,8 @@ class AssemblyAssemblyActionWidgetGroup : public QWidget
 
   void toggle_view(bool);
 
+  void refresh_checkStates(int);
+
  signals:
   void group_request();
   void perform_action_request();

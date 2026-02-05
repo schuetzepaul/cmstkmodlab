@@ -221,7 +221,7 @@ AssemblyAssemblyV2View::AssemblyAssemblyV2View(const AssemblyAssemblyV2* const a
       tmp_wid->label()->setText(QString::number(assembly_step_N));
       tmp_wid->button()->setText("Go To Measurement Position on MaPSA");
 
-      int n_action_vector = tmp_group->add_action(tmp_wid);
+      int n_action_vector = combine_action_group(tmp_group, tmp_wid);
       if(n_action_vector != assembly_step_N-step_start+1){
           NQLog("AssemblyAssemblyViewV2", NQLog::Fatal) << "Length of group's action vector (" << n_action_vector <<
           ") does not match expectation (" << assembly_step_N-step_start+1 << ")";
@@ -239,7 +239,7 @@ AssemblyAssemblyV2View::AssemblyAssemblyV2View(const AssemblyAssemblyV2* const a
       tmp_wid->label()->setText(QString::number(assembly_step_N));
       tmp_wid->button()->setText("Enable Vacuum on MaPSA");
 
-      int n_action_vector = tmp_group->add_action(tmp_wid);
+      int n_action_vector = combine_action_group(tmp_group, tmp_wid);
       if(n_action_vector != assembly_step_N-step_start+1){
           NQLog("AssemblyAssemblyViewV2", NQLog::Fatal) << "Length of group's action vector (" << n_action_vector <<
           ") does not match expectation (" << assembly_step_N-step_start+1 << ")";
@@ -284,7 +284,7 @@ AssemblyAssemblyV2View::AssemblyAssemblyV2View(const AssemblyAssemblyV2* const a
           tmp_wid->label()->setText(QString::number(assembly_step_N));
           tmp_wid->button()->setText("Go From Sensor Marker Ref-Point to Pickup XY");
 
-          int n_action_vector = tmp_group->add_action(tmp_wid);
+          int n_action_vector = combine_action_group(tmp_group, tmp_wid);
           if(n_action_vector != assembly_step_N-step_start+1){
               NQLog("AssemblyAssemblyViewV2", NQLog::Fatal) << "Length of group's action vector (" << n_action_vector <<
               ") does not match expectation (" << assembly_step_N-step_start+1 << ")";
@@ -302,7 +302,7 @@ AssemblyAssemblyV2View::AssemblyAssemblyV2View(const AssemblyAssemblyV2* const a
           tmp_wid->label()->setText(QString::number(assembly_step_N));
           tmp_wid->button()->setText("Lower Pickup-Tool onto MaPSA");
 
-          int n_action_vector = tmp_group->add_action(tmp_wid);
+          int n_action_vector = combine_action_group(tmp_group, tmp_wid);
           if(n_action_vector != assembly_step_N-step_start+1){
               NQLog("AssemblyAssemblyViewV2", NQLog::Fatal) << "Length of group's action vector (" << n_action_vector <<
               ") does not match expectation (" << assembly_step_N-step_start+1 << ")";
@@ -320,7 +320,7 @@ AssemblyAssemblyV2View::AssemblyAssemblyV2View(const AssemblyAssemblyV2* const a
           tmp_wid->label()->setText(QString::number(assembly_step_N));
           tmp_wid->button()->setText("Enable Vacuum on Pickup-Tool");
 
-          int n_action_vector = tmp_group->add_action(tmp_wid);
+          int n_action_vector = combine_action_group(tmp_group, tmp_wid);
           if(n_action_vector != assembly_step_N-step_start+1){
               NQLog("AssemblyAssemblyViewV2", NQLog::Fatal) << "Length of group's action vector (" << n_action_vector <<
               ") does not match expectation (" << assembly_step_N-step_start+1 << ")";
@@ -338,7 +338,7 @@ AssemblyAssemblyV2View::AssemblyAssemblyV2View(const AssemblyAssemblyV2* const a
           tmp_wid->label()->setText(QString::number(assembly_step_N));
           tmp_wid->button()->setText("Disable Vacuum on MaPSA");
 
-          int n_action_vector = tmp_group->add_action(tmp_wid);
+          int n_action_vector = combine_action_group(tmp_group, tmp_wid);
           if(n_action_vector != assembly_step_N-step_start+1){
               NQLog("AssemblyAssemblyViewV2", NQLog::Fatal) << "Length of group's action vector (" << n_action_vector <<
               ") does not match expectation (" << assembly_step_N-step_start+1 << ")";
@@ -356,7 +356,7 @@ AssemblyAssemblyV2View::AssemblyAssemblyV2View(const AssemblyAssemblyV2* const a
           tmp_wid->label()->setText(QString::number(assembly_step_N));
           tmp_wid->button()->setText("Pick Up MaPSA");
 
-          int n_action_vector = tmp_group->add_action(tmp_wid);
+          int n_action_vector = combine_action_group(tmp_group, tmp_wid);
           if(n_action_vector != assembly_step_N-step_start+1){
               NQLog("AssemblyAssemblyViewV2", NQLog::Fatal) << "Length of group's action vector (" << n_action_vector <<
               ") does not match expectation (" << assembly_step_N-step_start+1 << ")";
@@ -1392,4 +1392,9 @@ void AssemblyAssemblyV2View::display_infoTab()
         ));
 
     return;
+}
+
+int AssemblyAssemblyV2View::combine_action_group(AssemblyAssemblyActionWidgetGroup* group, AssemblyAssemblyActionWidget* wid){
+    connect(wid->checkbox(), SIGNAL(stateChanged(int)), group, SLOT(refresh_checkStates(int)));
+    return group->add_action(wid);
 }

@@ -56,6 +56,8 @@ class AssemblyAssemblyV2View : public QWidget
   QLineEdit* module_id_lineed_;
   //QPushButton* push_to_db_button_;
 
+  int combine_action_group(AssemblyAssemblyActionWidgetGroup*, AssemblyAssemblyActionWidget*);
+
 };
 
 #endif // ASSEMBLYASSEMBLYV2VIEW_H

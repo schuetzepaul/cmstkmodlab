@@ -168,6 +168,15 @@ void AssemblyAssemblyActionWidgetGroup::next_action()
   NQLog("AssemblyAssemblyActionWidgetGroup", NQLog::Warning) << "next_action: "
        << "Initiating action #" << n_actions_performed_+1 << " out of " << m_vec_actions.size();
 
+  button_->setStyleSheet(
+         "Text-align: left;"
+         "padding-left:   4px;"
+         "padding-right:  4px;"
+         "padding-top:    3px;"
+         "padding-bottom: 3px;"
+         "color: red;"
+       );
+
   if(qobject_)
   {
     if(n_actions_performed_ > 0){
@@ -214,6 +223,14 @@ void AssemblyAssemblyActionWidgetGroup::disable_group()
 
     inhibit_dialogue_ = true;
     checkbox_->setCheckState(Qt::Checked);
+
+    button_->setStyleSheet(
+           "Text-align: left;"
+           "padding-left:   4px;"
+           "padding-right:  4px;"
+           "padding-top:    3px;"
+           "padding-bottom: 3px;"
+         );
 
     n_actions_performed_ = 0;
     NQLog("AssemblyAssemblyActionWidgetGroup", NQLog::Warning) << "disable_group"

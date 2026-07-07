@@ -20,6 +20,8 @@
 
 #include <QFont>
 #include <QIcon>
+#include <QMediaPlayer>
+#include <QFile>
 
 AssemblyStopwatchWidget::AssemblyStopwatchWidget(QWidget* parent) : QWidget(parent)
 {
@@ -99,6 +101,32 @@ void AssemblyStopwatchWidget::updateStopwatch(){
 
   auto time_str = QString("<font color='") + color_str + "'>" + time_elapsed.toString("mm:ss") + "</font>";
   elapsedTimeLabel_->setText(time_str);
+
+  if(m_previous_time < QTime(0, 1, 0) && time_elapsed >= QTime(0, 1, 0)) {
+    NQLog("AssemblyStopwatchWidget", NQLog::Message) << ": Time for mixing is up.";
+
+    auto mediafilename = QString::fromStdString(Config::CMSTkModLabBasePath+"/share/assembly/rooster.mp3");
+    auto mediafile = QFile(mediafilename);
+    if(mediafile.exists()) {
+        auto player = new QMediaPlayer;
+        player->setMedia(QUrl::fromLocalFile(mediafilename));
+        player->setVolume(100);
+        player->play();
+    }
+  } else if(m_previous_time < QTime(0, 20, 0) && time_elapsed >= QTime(0, 20, 0)) {
+    NQLog("AssemblyStopwatchWidget", NQLog::Message) << ": Time to continue.";
+
+    auto mediafilename = QString::fromStdString(Config::CMSTkModLabBasePath+"/share/assembly/letsgo.mp3");
+    auto mediafile = QFile(mediafilename);
+    if(mediafile.exists()) {
+        auto player = new QMediaPlayer;
+        player->setMedia(QUrl::fromLocalFile(mediafilename));
+        player->setVolume(100);
+        player->play();
+    }
+  }
+
+  m_previous_time = time_elapsed;
 
   NQLog("AssemblyStopwatchWidget", NQLog::Debug) << ": Time: " << time_elapsed.toString("mm:ss");
 }

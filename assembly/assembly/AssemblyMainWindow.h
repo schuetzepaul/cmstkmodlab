@@ -160,8 +160,6 @@ class AssemblyMainWindow : public QMainWindow
 
   void messageBox_restartMotionStage();
 
-  void restore_autofocus_settings();
-
   void disable_imageButtons(QObject*);
 
   void enable_imageButtons(QObject*);

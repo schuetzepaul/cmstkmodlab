@@ -24,6 +24,7 @@ class VDatabase : public QObject
       VDatabase(QObject* parent);
       ~VDatabase();
 
+      virtual bool validate_module_ID(QString) = 0;
       virtual bool register_module_name(QString, QString) = 0;
       virtual bool MaPSA_to_BP(QString, QString, QString, QString, QString) = 0;
       virtual bool PSs_to_spacers(QString, QString, QString, QString) = 0;

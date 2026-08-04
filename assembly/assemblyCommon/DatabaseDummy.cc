@@ -27,6 +27,9 @@ DatabaseDummy::~DatabaseDummy()
     // Any connections to close?
 }
 
+bool DatabaseDummy::validate_module_ID(QString module_name) {
+    return true;
+}
 
 bool DatabaseDummy::register_module_name(QString module_name, QString operator_name)
 {

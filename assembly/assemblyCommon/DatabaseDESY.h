@@ -27,6 +27,7 @@ class DatabaseDESY : public VDatabase
       explicit DatabaseDESY(QObject* parent, QString base_url, QString token);
       ~DatabaseDESY();
 
+      bool validate_module_ID(QString);
       bool register_module_name(QString, QString);
       bool MaPSA_to_BP(QString, QString, QString, QString, QString="");
       bool PSs_to_spacers(QString, QString, QString, QString="");

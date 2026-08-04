@@ -312,6 +312,9 @@ void AssemblyAssemblyV2::ScanModuleID_start()
     if (!ok || Module_ID.isEmpty()){
         emit ScanModuleID_aborted();
         return;
+    } else if (!database_->validate_module_ID(Module_ID)) {
+        emit ScanModuleID_aborted();
+        return;
     } else {
         Module_ID_ = Module_ID;
         emit Module_ID_updated(Module_ID);

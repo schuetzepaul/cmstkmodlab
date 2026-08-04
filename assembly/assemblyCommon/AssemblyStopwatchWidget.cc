@@ -33,8 +33,10 @@ AssemblyStopwatchWidget::AssemblyStopwatchWidget(QWidget* parent) : QWidget(pare
   auto config = ApplicationConfig::instance();
 
   m_sound_1min = QString::fromStdString(Config::CMSTkModLabBasePath + config->getDefaultValue<std::string>("main", "StopwatchSound_1min", "/share/assembly/rooster.mp3"));
+  m_sound_18min = QString::fromStdString(Config::CMSTkModLabBasePath + config->getDefaultValue<std::string>("main", "StopwatchSound_18min", "/share/assembly/twominutes.mp3"));
   m_sound_20min = QString::fromStdString(Config::CMSTkModLabBasePath + config->getDefaultValue<std::string>("main", "StopwatchSound_20min", "/share/assembly/letsgo.mp3"));
   volume_1min_ = config->getDefaultValue<int>("main", "StopwatchSound_1min_volume", 80);
+  volume_18min_ = config->getDefaultValue<int>("main", "StopwatchSound_18min_volume", 80);
   volume_20min_ = config->getDefaultValue<int>("main", "StopwatchSound_20min_volume", 100);
 
   start_ = new QPushButton(QIcon(QString(Config::CMSTkModLabBasePath.c_str())+"/share/common/play.png"), "", this);
@@ -73,7 +75,7 @@ AssemblyStopwatchWidget::AssemblyStopwatchWidget(QWidget* parent) : QWidget(pare
 void AssemblyStopwatchWidget::startStopwatch(){
   NQLog("AssemblyStopwatchWidget", NQLog::Message) << ": Starting stopwatch";
   reference_time_ = QTime::currentTime();
-  update_timer_->start(1000);
+  update_timer_->start(500);
   updateStopwatch();
 
   start_->setVisible(false);
@@ -102,9 +104,20 @@ void AssemblyStopwatchWidget::resetStopwatch(){
 void AssemblyStopwatchWidget::updateStopwatch(){
   NQLog("AssemblyStopwatchWidget", NQLog::Debug) << ": Updating stopwatch";
 
-  QTime time_elapsed = QTime(0, 0, 0).addSecs(reference_time_.secsTo(QTime::currentTime()));
+  QTime time_elapsed = QTime(0, 0, 0).addMSecs(reference_time_.msecsTo(QTime::currentTime()));
 
-  QString color_str = time_elapsed < QTime(0, 1, 0) ? "red" : (time_elapsed < QTime(0, 20, 0) ? "orange" : "darkgreen");
+  QString color_str;
+  if(time_elapsed < QTime(0, 1, 0))
+  {
+      color_str = "red";
+  } else if(time_elapsed > QTime(0, 20, 0))
+  {
+      color_str = "darkgreen";
+  } else if(time_elapsed > QTime(0, 18, 0)){
+      color_str = (time_elapsed.msec() >= 500 ? "orange" : "darkgreen");
+  } else {
+      color_str = "orange";
+  }
 
   auto time_str = QString("<font color='") + color_str + "'>" + time_elapsed.toString("mm:ss") + "</font>";
   elapsedTimeLabel_->setText(time_str);
@@ -117,6 +130,16 @@ void AssemblyStopwatchWidget::updateStopwatch(){
         auto player = new QMediaPlayer;
         player->setMedia(QUrl::fromLocalFile(m_sound_1min));
         player->setVolume(volume_1min_);
+        player->play();
+    }
+  } else if(m_previous_time < QTime(0, 18, 0) && time_elapsed >= QTime(0, 18, 0)) {
+    NQLog("AssemblyStopwatchWidget", NQLog::Message) << ": Preparing to continue the assembly.";
+
+    auto mediafile = QFile(m_sound_18min);
+    if(mediafile.exists()) {
+        auto player = new QMediaPlayer;
+        player->setMedia(QUrl::fromLocalFile(m_sound_18min));
+        player->setVolume(volume_18min_);
         player->play();
     }
   } else if(m_previous_time < QTime(0, 20, 0) && time_elapsed >= QTime(0, 20, 0)) {

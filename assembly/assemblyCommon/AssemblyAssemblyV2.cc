@@ -26,6 +26,8 @@
 #include <QLabel>
 #include <QTextEdit>
 #include <QFileInfo>
+#include <QMediaPlayer>
+#include <QFile>
 
 AssemblyAssemblyV2::AssemblyAssemblyV2(const LStepExpressMotionManager* const motion, const RelayCardManager* const vacuum, const AssemblySmartMotionManager* const smart_motion, QObject* parent)
  : QObject(parent)
@@ -2628,6 +2630,17 @@ void AssemblyAssemblyV2::AssemblyCompleted_start()
   if(in_action_){
     reportInAction("AssemblyCompleted", SIGNAL(AssemblyCompleted_abort()));
     return;
+  }
+
+  auto sound_complete = QString::fromStdString(Config::CMSTkModLabBasePath + "/share/assembly/fanfare.mp3");
+  auto mediafile = QFile(sound_complete);
+  if(mediafile.exists()) {
+      auto player = new QMediaPlayer;
+      player->setMedia(QUrl::fromLocalFile(sound_complete));
+      player->setVolume(100);
+      player->play();
+  } else {
+      NQLog("AssemblyAssemblyV2", NQLog::Message) << "Sound file not found.";
   }
 
   QMessageBox* msgBox = new QMessageBox;

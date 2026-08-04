@@ -71,6 +71,8 @@ class AssemblyObjectAligner : public QObject
     void connect_motion_manager() { this->enable_motion_manager(true) ; }
     void disconnect_motion_manager() { this->enable_motion_manager(false); }
 
+    void report_alignment_completed();
+
     // maximum number of allowed iterations in a single alignment execution
     int max_numOfRotations_;
 

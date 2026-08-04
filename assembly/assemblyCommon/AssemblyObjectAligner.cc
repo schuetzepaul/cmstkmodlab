@@ -16,6 +16,9 @@
 #include <AssemblyObjectAligner.h>
 #include <AssemblyUtilities.h>
 
+#include <QMediaPlayer>
+#include <QFile>
+
 #include <cmath>
 
 AssemblyObjectAligner::AssemblyObjectAligner(const LStepExpressMotionManager* const motion_manager, QObject* parent)
@@ -451,23 +454,7 @@ void AssemblyObjectAligner::run_alignment(const double patrec_dX, const double p
       }
       else //Else, finish there and emit 'execution_completed' signal
       {
-        NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]: ===> Alignment routine completed successfully";
-        NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]";
-
-        NQLog("AssemblyObjectAligner", NQLog::Spam) << "run_alignment: step [" << alignment_step_ << "]"
-           << ": emitting signal \"execution_completed\"";
-
-        this->reset();
-        this->reset_counter_numOfRotations();
-
-        QMessageBox* msgBox = new QMessageBox;
-        msgBox->setInformativeText("Alignment routine completed successfully!");
-
-        msgBox->setStandardButtons(QMessageBox::Ok);
-
-        int ret = msgBox->exec();
-
-        emit execution_completed();
+        report_alignment_completed();
       }
     }
     else //(If 'Align object' box is ticked)
@@ -554,23 +541,8 @@ void AssemblyObjectAligner::run_alignment(const double patrec_dX, const double p
           NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]";
           NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]: object aligned with angle [deg] = " << obj_angle_deg_;
           NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]";
-          NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]: ===> Alignment routine completed successfully";
-          NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]";
 
-          NQLog("AssemblyObjectAligner", NQLog::Spam) << "run_alignment: step [" << alignment_step_ << "]"
-             << ": emitting signal \"execution_completed\"";
-
-          this->reset();
-          this->reset_counter_numOfRotations();
-
-          QMessageBox* msgBox = new QMessageBox;
-          msgBox->setInformativeText("Alignment routine completed successfully!");
-
-          msgBox->setStandardButtons(QMessageBox::Ok);
-
-          int ret = msgBox->exec();
-
-          emit execution_completed();
+          report_alignment_completed();
         }
       }
     }
@@ -606,11 +578,33 @@ void AssemblyObjectAligner::run_alignment(const double patrec_dX, const double p
     NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]";
     NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]: object aligned with angle [deg] = " << obj_angle_deg_;
     NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]";
+
+    report_alignment_completed();
+  }
+
+  return;
+}
+
+void AssemblyObjectAligner::report_alignment_completed() {
     NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]: ===> Alignment routine completed successfully";
     NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]";
 
+    NQLog("AssemblyObjectAligner", NQLog::Spam) << "run_alignment: step [" << alignment_step_ << "]"
+       << ": emitting signal \"execution_completed\"";
+
     this->reset();
     this->reset_counter_numOfRotations();
+
+    auto sound_alignment = QString::fromStdString(Config::CMSTkModLabBasePath + "/share/assembly/alignment.mp3");
+    auto mediafile = QFile(sound_alignment);
+    if(mediafile.exists()) {
+        auto player = new QMediaPlayer;
+        player->setMedia(QUrl::fromLocalFile(sound_alignment));
+        player->setVolume(100);
+        player->play();
+    } else {
+        NQLog("AssemblyObjectAligner", NQLog::Message) << "Sound file not found.";
+    }
 
     QMessageBox* msgBox = new QMessageBox;
     msgBox->setInformativeText("Alignment routine completed successfully!");
@@ -620,7 +614,4 @@ void AssemblyObjectAligner::run_alignment(const double patrec_dX, const double p
     int ret = msgBox->exec();
 
     emit execution_completed();
-  }
-
-  return;
 }

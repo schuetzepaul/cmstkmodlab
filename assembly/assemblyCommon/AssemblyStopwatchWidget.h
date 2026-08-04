@@ -52,8 +52,10 @@ class AssemblyStopwatchWidget : public QWidget
   QLabel* elapsedTimeLabel_;
 
   QString m_sound_1min;
+  QString m_sound_18min;
   QString m_sound_20min;
   int volume_1min_;
+  int volume_18min_;
   int volume_20min_;
 
  public slots:

@@ -33,8 +33,10 @@ AssemblyStopwatchWidget::AssemblyStopwatchWidget(QWidget* parent) : QWidget(pare
   auto config = ApplicationConfig::instance();
 
   m_sound_1min = QString::fromStdString(Config::CMSTkModLabBasePath + config->getDefaultValue<std::string>("main", "StopwatchSound_1min", "/share/assembly/rooster.mp3"));
+  m_sound_18min = QString::fromStdString(Config::CMSTkModLabBasePath + config->getDefaultValue<std::string>("main", "StopwatchSound_18min", "/share/assembly/twominutes.mp3"));
   m_sound_20min = QString::fromStdString(Config::CMSTkModLabBasePath + config->getDefaultValue<std::string>("main", "StopwatchSound_20min", "/share/assembly/letsgo.mp3"));
   volume_1min_ = config->getDefaultValue<int>("main", "StopwatchSound_1min_volume", 80);
+  volume_18min_ = config->getDefaultValue<int>("main", "StopwatchSound_18min_volume", 80);
   volume_20min_ = config->getDefaultValue<int>("main", "StopwatchSound_20min_volume", 100);
 
   start_ = new QPushButton(QIcon(QString(Config::CMSTkModLabBasePath.c_str())+"/share/common/play.png"), "", this);
@@ -117,6 +119,16 @@ void AssemblyStopwatchWidget::updateStopwatch(){
         auto player = new QMediaPlayer;
         player->setMedia(QUrl::fromLocalFile(m_sound_1min));
         player->setVolume(volume_1min_);
+        player->play();
+    }
+  } else if(m_previous_time < QTime(0, 18, 0) && time_elapsed >= QTime(0, 18, 0)) {
+    NQLog("AssemblyStopwatchWidget", NQLog::Message) << ": Preparing to continue the assembly.";
+
+    auto mediafile = QFile(m_sound_18min);
+    if(mediafile.exists()) {
+        auto player = new QMediaPlayer;
+        player->setMedia(QUrl::fromLocalFile(m_sound_18min));
+        player->setVolume(volume_18min_);
         player->play();
     }
   } else if(m_previous_time < QTime(0, 20, 0) && time_elapsed >= QTime(0, 20, 0)) {

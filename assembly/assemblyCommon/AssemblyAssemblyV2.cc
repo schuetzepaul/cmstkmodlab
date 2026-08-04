@@ -324,7 +324,8 @@ void AssemblyAssemblyV2::RegisterModuleID_start()
     NQLog("AssemblyAssemblyV2", NQLog::Spam) << "RegisterModuleID_start: "
     << "Attempting to register module ID in DB";
 
-    if(database_->register_module_name(Module_ID_, "OperatorName"))
+    auto operator_name = config_->getDefaultValue<std::string>("main", "Database_User", "OperatorName");
+    if(database_->register_module_name(Module_ID_, QString::fromStdString(operator_name)))
     {
         NQLog("AssemblyAssemblyV2", NQLog::Spam) << "RegisterModuleID_start: "
         << "Successfully registered module in DB";

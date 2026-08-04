@@ -312,6 +312,9 @@ void AssemblyAssemblyV2::ScanModuleID_start()
     if (!ok || Module_ID.isEmpty()){
         emit ScanModuleID_aborted();
         return;
+    } else if (!database_->validate_module_ID(Module_ID)) {
+        emit ScanModuleID_aborted();
+        return;
     } else {
         Module_ID_ = Module_ID;
         emit Module_ID_updated(Module_ID);
@@ -324,7 +327,8 @@ void AssemblyAssemblyV2::RegisterModuleID_start()
     NQLog("AssemblyAssemblyV2", NQLog::Spam) << "RegisterModuleID_start: "
     << "Attempting to register module ID in DB";
 
-    if(database_->register_module_name(Module_ID_, "OperatorName"))
+    auto operator_name = config_->getDefaultValue<std::string>("main", "Database_User", "OperatorName");
+    if(database_->register_module_name(Module_ID_, QString::fromStdString(operator_name)))
     {
         NQLog("AssemblyAssemblyV2", NQLog::Spam) << "RegisterModuleID_start: "
         << "Successfully registered module in DB";

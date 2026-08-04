@@ -12,6 +12,8 @@
 
 #include <DatabaseDESY.h>
 
+#include <ApplicationConfig.h>
+
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
@@ -21,8 +23,10 @@
 #include <QEventLoop>
 #include <QMessageBox>
 #include <QTextDocumentFragment>
+#include <QRegularExpression>
 
 #include <iostream>
+#include <math.h>
 #include <nqlogger.h>
 
 DatabaseDESY::DatabaseDESY(QObject *parent, QString base_url, QString token)
@@ -48,6 +52,35 @@ DatabaseDESY::~DatabaseDESY()
 {
 }
 
+bool DatabaseDESY::validate_module_ID(QString module_name)
+{
+    // Check whether the module name meets the conventions
+    QRegularExpression re("PS_(?<flavour>\\d\\d)_DSY-\\d\\d\\d\\d\\d");
+    QRegularExpressionMatch match = re.match(module_name);
+    if (match.hasMatch()) {
+        QString flavour_str = match.captured("flavour");
+
+        std::set<QString> possible_flavours{"16", "26", "40"};
+        if(!possible_flavours.count(flavour_str)) {
+            error_message("\"register_module_name\" (registering): Module flavour is not valid. Possible flavours: 16, 26, 40.");
+            return false;
+        }
+
+        ApplicationConfig* config = ApplicationConfig::instance();
+        auto flavour = flavour_str.toInt() / 10.;
+        auto spacer_thickness = config->getValue<double>("parameters", "Thickness_Spacer");
+
+        if(fabs(flavour - 0.8 - spacer_thickness) > 0.05) {
+            error_message("\"register_module_name\" (registering): Module name does not match spacer thickness. Please check module name or spacer thickness.");
+            return false;
+        }
+    } else {
+        error_message("Module name does not meet conventions: PS_XX_DSY-YYYYY");
+        return false;
+    }
+
+    return true;
+}
 
 bool DatabaseDESY::register_module_name(QString module_name, QString operator_name)
 {

@@ -25,6 +25,7 @@ class DatabaseBrown : public VDatabase
       explicit DatabaseBrown(QObject* parent, QFileInfo file_path);
       ~DatabaseBrown();
 
+      bool validate_module_ID(QString) { return true; };
       bool register_module_name(QString, QString);
       bool MaPSA_to_BP(QString, QString, QString, QString="", QString="");
       bool PSs_to_spacers(QString, QString, QString="", QString="");

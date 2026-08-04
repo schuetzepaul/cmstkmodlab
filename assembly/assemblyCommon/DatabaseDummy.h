@@ -23,6 +23,7 @@ class DatabaseDummy : public VDatabase
       explicit DatabaseDummy(QObject* parent);
       ~DatabaseDummy();
 
+      bool validate_module_ID(QString);
       bool register_module_name(QString, QString);
       bool MaPSA_to_BP(QString, QString, QString, QString, QString);
       bool PSs_to_spacers(QString, QString, QString, QString);

@@ -136,6 +136,7 @@ class AssemblyObjectAlignerView : public QWidget
  signals:
 
   void configuration(AssemblyObjectAligner::Configuration);
+  void execution_failed();
 };
 
 #endif // ASSEMBLYOBJECTALIGNERVIEW_H

@@ -680,6 +680,7 @@ void AssemblyObjectAlignerView::transmit_configuration()
     case QMessageBox::No:
       NQLog("AssemblyObjectAlignerView", NQLog::Critical) << "transmit_configuration"
       << ": abort start of alignment procedure";
+      emit execution_failed();
       return;
     default: return;
   }

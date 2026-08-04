@@ -2662,7 +2662,7 @@ void AssemblyAssemblyV2::AssemblyCompleted_start()
 void AssemblyAssemblyV2::PerformAlignmentPSP()
 {
   if(in_action_){
-    reportInAction("PerformAlignmentPSP", SIGNAL(PerformAlignmentPSP_abort()));
+    reportInAction("PerformAlignmentPSP", SIGNAL(perform_alignment_aborted()));
     return;
   }
 
@@ -2683,7 +2683,7 @@ void AssemblyAssemblyV2::PerformAlignmentPSP()
 void AssemblyAssemblyV2::PerformAlignmentPSS()
 {
   if(in_action_){
-    reportInAction("PerformAlignmentPSS", SIGNAL(PerformAlignmentPSS_abort()));
+    reportInAction("PerformAlignmentPSS", SIGNAL(perform_alignment_aborted()));
     return;
   }
 
@@ -2697,6 +2697,23 @@ void AssemblyAssemblyV2::PerformAlignmentPSS()
   return;
 }
 // ----------------------------------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------------------------------
+// AbortAlignment ------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------
+void AssemblyAssemblyV2::AbortAlignment()
+{
+    set_in_action(false);
+    emit perform_alignment_aborted();
+}
+
+// ----------------------------------------------------------------------------------------------------
+// FinishAlignment ------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------
+void AssemblyAssemblyV2::FinishAlignment()
+{
+    emit perform_alignment_finished();
+}
 
 // ----------------------------------------------------------------------------------------------------
 // takeImage ------------------------------------------------------------------------------

@@ -313,6 +313,12 @@ AssemblyMainWindow::AssemblyMainWindow(const QString& outputdir_path, const QStr
       connect(assemblyV2_, SIGNAL(perform_alignment_PSP_request()), this, SLOT(perform_alignment_psp()));
       connect(assemblyV2_, SIGNAL(perform_alignment_PSS_request()), this, SLOT(perform_alignment_pss()));
 
+      connect(aligner_, SIGNAL(execution_successful()), assemblyV2_, SLOT(FinishAlignment()));
+
+      connect(aligner_view_->button_alignerEmergencyStop(), SIGNAL(clicked()), assemblyV2_, SLOT(AbortAlignment()));
+      connect(aligner_view_, SIGNAL(execution_failed()), assemblyV2_, SLOT(AbortAlignment()));
+      connect(image_view_->autofocus_emergencyStop_button(), SIGNAL(clicked()), assemblyV2_, SLOT(AbortAlignment()));
+
       connect(assemblyV2_, SIGNAL(TakeImage_request()), this, SLOT(select_image_tab()));
       connect(assemblyV2_, SIGNAL(TakeImage_request()), this, SLOT(get_image()));
 
@@ -513,6 +519,7 @@ AssemblyMainWindow::AssemblyMainWindow(const QString& outputdir_path, const QStr
     connect(button_mainEmergencyStop_, SIGNAL(clicked()), metrology_view_, SLOT(metrology_abort()));
     connect(button_mainEmergencyStop_, SIGNAL(clicked()), this, SLOT(disconnect_metrology()));
     connect(button_mainEmergencyStop_, SIGNAL(clicked()), this, SLOT(disconnect_multiPickupTest()));
+    connect(button_mainEmergencyStop_, SIGNAL(clicked()), assemblyV2_, SLOT(AbortAlignment()));
 
     QWidget *spacer1 = new QWidget();
     spacer1->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);

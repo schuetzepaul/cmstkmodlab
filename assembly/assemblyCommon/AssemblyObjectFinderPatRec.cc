@@ -368,7 +368,7 @@ void AssemblyObjectFinderPatRec::template_matching(const AssemblyObjectFinderPat
 
   NQLog("AssemblyObjectFinderPatRec", NQLog::Message) << "template_matching: created output directory: " << output_dir;
 
-  if(output_subdir != "")
+  if(output_subdir != "" && config_->getDefaultValue<int>("main", "Store_Images_PatRec", 2)>=2)
   {
     assembly::QDir_mkpath(output_subdir);
 
@@ -376,26 +376,29 @@ void AssemblyObjectFinderPatRec::template_matching(const AssemblyObjectFinderPat
   }
   // -----------
 
-  // Input images to PatRec
-  const std::string filepath_img_master        = output_dir+"/image_master_raw.png";
-  const std::string filepath_img_master_PatRec = output_dir+"/image_master_PatRec.png";
-  const std::string filepath_img_templa_PatRec = output_dir+"/image_template_PatRec.png";
+  if(config_->getDefaultValue<int>("main", "Store_Images_PatRec", 2)>=1)
+  {
+      // Input images to PatRec
+      const std::string filepath_img_master        = output_dir+"/image_master_raw.png";
+      const std::string filepath_img_master_PatRec = output_dir+"/image_master_PatRec.png";
+      const std::string filepath_img_templa_PatRec = output_dir+"/image_template_PatRec.png";
 
-  assembly::cv_imwrite(filepath_img_master, img_master);
+      assembly::cv_imwrite(filepath_img_master, img_master);
 
-  NQLog("AssemblyObjectFinderPatRec", NQLog::Spam) << "template_matching"
-     << ": saved master image to " << filepath_img_master;
+      NQLog("AssemblyObjectFinderPatRec", NQLog::Spam) << "template_matching"
+         << ": saved master image to " << filepath_img_master;
 
-  assembly::cv_imwrite(filepath_img_master_PatRec, img_master_PatRec);
+      assembly::cv_imwrite(filepath_img_master_PatRec, img_master_PatRec);
 
-  NQLog("AssemblyObjectFinderPatRec", NQLog::Spam) << "template_matching"
-     << ": saved PatRec-input master image to " << filepath_img_master_PatRec;
+      NQLog("AssemblyObjectFinderPatRec", NQLog::Spam) << "template_matching"
+         << ": saved PatRec-input master image to " << filepath_img_master_PatRec;
 
-  assembly::cv_imwrite(filepath_img_templa_PatRec, img_templa_PatRec);
+      assembly::cv_imwrite(filepath_img_templa_PatRec, img_templa_PatRec);
 
-  NQLog("AssemblyObjectFinderPatRec", NQLog::Spam) << "template_matching"
-     << ": saved PatRec-input template image to " << filepath_img_templa_PatRec;
-  // -----------
+      NQLog("AssemblyObjectFinderPatRec", NQLog::Spam) << "template_matching"
+         << ": saved PatRec-input template image to " << filepath_img_templa_PatRec;
+      // -----------
+  }
 
   // --- Template Matching
 
@@ -560,8 +563,11 @@ void AssemblyObjectFinderPatRec::template_matching(const AssemblyObjectFinderPat
   }
   // ---
 
-  const std::string filepath_img_master_copy = output_dir+"/image_master_PatRec_edited.png";
-  assembly::cv_imwrite(filepath_img_master_copy, img_master_copy);
+  if(config_->getDefaultValue<int>("main", "Store_Images_PatRec", 2)>=1)
+  {
+      const std::string filepath_img_master_copy = output_dir+"/image_master_PatRec_edited.png";
+      assembly::cv_imwrite(filepath_img_master_copy, img_master_copy);
+  }
 
   NQLog("AssemblyObjectFinderPatRec", NQLog::Spam) << "template_matching"
      << ": emitting signal \"PatRec_res_image_master_edited()\"";
@@ -662,7 +668,7 @@ void AssemblyObjectFinderPatRec::PatRec(double& fom, cv::Point& match_loc, const
 
   warpAffine(img_master_PatRec, img_master_PatRec_rot, rot_mat, img_master_PatRec.size(), cv::INTER_NEAREST, cv::BORDER_CONSTANT, avgPixelIntensity);
 
-  if(out_dir != "")
+  if(out_dir != "" && config_->getDefaultValue<int>("main", "Store_Images_PatRec", 2)>=2)
   {
     const std::string filepath_img_master_PatRec_rot = out_dir+"/image_master_PatRec_Rotation_"+std::to_string(angle_master)+".png";
 

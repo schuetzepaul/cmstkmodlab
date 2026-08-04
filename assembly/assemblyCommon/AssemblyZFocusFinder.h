@@ -15,6 +15,7 @@
 
 #include <AssemblyVUEyeCamera.h>
 #include <LStepExpressMotionManager.h>
+#include <ApplicationConfig.h>
 
 #include <QObject>
 #include <QString>
@@ -49,6 +50,8 @@ class AssemblyZFocusFinder : public QObject
   protected:
 
     QString output_dir_prepath_;
+
+    const ApplicationConfig* config_;
 
     const AssemblyVUEyeCamera*       camera_manager_;
     const LStepExpressMotionManager* motion_manager_;

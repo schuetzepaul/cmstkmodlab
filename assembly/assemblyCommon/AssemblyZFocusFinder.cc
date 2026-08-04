@@ -11,7 +11,6 @@
 /////////////////////////////////////////////////////////////////////////////////
 
 #include <nqlogger.h>
-#include <ApplicationConfig.h>
 
 #include <AssemblyZFocusFinder.h>
 #include <AssemblyUtilities.h>
@@ -45,8 +44,8 @@ AssemblyZFocusFinder::AssemblyZFocusFinder(const QString& output_dir_prepath, co
  , output_dir_("")
 {
   // initialization
-  ApplicationConfig* config = ApplicationConfig::instance();
-  if(config == nullptr)
+  config_ = ApplicationConfig::instance();
+  if(config_ == nullptr)
   {
     NQLog("AssemblyZFocusFinder", NQLog::Fatal) << "initialization error"
        << ": ApplicationConfig::instance() not initialized (null pointer), exiting constructor";
@@ -54,13 +53,13 @@ AssemblyZFocusFinder::AssemblyZFocusFinder(const QString& output_dir_prepath, co
     return;
   }
 
-  focus_pointN_max_ = config->getDefaultValue<int>   ("main", "AssemblyZFocusFinder_pointN_max", 200);
-  focus_pointN_     = config->getDefaultValue<int>   ("main", "AssemblyZFocusFinder_pointN"    ,  50);
+  focus_pointN_max_ = config_->getDefaultValue<int>   ("main", "AssemblyZFocusFinder_pointN_max", 200);
+  focus_pointN_     = config_->getDefaultValue<int>   ("main", "AssemblyZFocusFinder_pointN"    ,  50);
 
-  focus_zrange_max_ = config->getDefaultValue<double>("main", "AssemblyZFocusFinder_zrange_max", 3.0);
-  focus_zrange_     = config->getDefaultValue<double>("main", "AssemblyZFocusFinder_zrange"    , 0.5);
+  focus_zrange_max_ = config_->getDefaultValue<double>("main", "AssemblyZFocusFinder_zrange_max", 3.0);
+  focus_zrange_     = config_->getDefaultValue<double>("main", "AssemblyZFocusFinder_zrange"    , 0.5);
 
-  focus_stepsize_min_ = config->getDefaultValue<double>("main", "AssemblyZFocusFinder_stepsize_min", 0.005);
+  focus_stepsize_min_ = config_->getDefaultValue<double>("main", "AssemblyZFocusFinder_stepsize_min", 0.005);
 
   v_zrelm_vals_.clear();
   v_focus_vals_.clear();
@@ -408,10 +407,13 @@ void AssemblyZFocusFinder::process_image(const cv::Mat& img)
 
     zrelm_index_ = -1;
 
-    // save best-focus image
-    const std::string img_outpath = output_dir_+"/AssemblyZFocusFinder_best.png";
+    if(config_->getDefaultValue<int>("main", "Store_Images_ZFocusFinder", 2)>=1)
+    {
+        // save best-focus image
+        const std::string img_outpath = output_dir_+"/AssemblyZFocusFinder_best.png";
 
-    cv::imwrite(img_outpath, img);
+        cv::imwrite(img_outpath, img);
+    }
 
     NQLog("AssemblyZFocusFinder", NQLog::Spam) << "process_image"
        << ": emitting signal \"image_acquired\"";
@@ -422,9 +424,12 @@ void AssemblyZFocusFinder::process_image(const cv::Mat& img)
   {
     // --- generic z-focus step ---
 
-    // save image
-    const std::string img_outpath = output_dir_+"/AssemblyZFocusFinder_"+std::to_string(v_focus_vals_.size())+".png";
-    cv::imwrite(img_outpath, img);
+    if(config_->getDefaultValue<int>("main", "Store_Images_ZFocusFinder", 2)>=2)
+    {
+        // save image
+        const std::string img_outpath = output_dir_+"/AssemblyZFocusFinder_"+std::to_string(v_focus_vals_.size())+".png";
+        cv::imwrite(img_outpath, img);
+    }
 
     // save z-focus info
     AssemblyZFocusFinder::focus_info this_focus;

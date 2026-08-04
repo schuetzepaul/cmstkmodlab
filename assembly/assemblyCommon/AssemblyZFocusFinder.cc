@@ -47,7 +47,7 @@ AssemblyZFocusFinder::AssemblyZFocusFinder(const QString& output_dir_prepath, co
   config_ = ApplicationConfig::instance();
   if(config_ == nullptr)
   {
-    NQLog("AssemblyObjectFinderPatRec", NQLog::Fatal) << "initialization error"
+    NQLog("AssemblyZFocusFinder", NQLog::Fatal) << "initialization error"
        << ": ApplicationConfig::instance() not initialized (null pointer), exiting constructor";
 
     return;

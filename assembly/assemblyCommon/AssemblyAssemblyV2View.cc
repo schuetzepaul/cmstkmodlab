@@ -171,14 +171,16 @@ AssemblyAssemblyV2View::AssemblyAssemblyV2View(const AssemblyAssemblyV2* const a
       }
       // ----------
 
-      // step: Check platform reference point
+      // step: Take an image
       {
         ++assembly_step_N;
 
-        AssemblyAssemblyTextWidget* tmp_wid = new AssemblyAssemblyTextWidget;
+        AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
         tmp_wid->label()->setText(QString::number(assembly_step_N));
-        tmp_wid->text()->setText("Take an Image and validate that the Platform Reference Marker is centered in the Image");
+        tmp_wid->button()->setText("Take an Image and validate that the Platform Reference Marker is centered in the Image");
         PSPToBasep_lay->addWidget(tmp_wid);
+
+        tmp_wid->connect_action(assembly, SLOT(TakeImage()), SIGNAL(TakeImage_request()), SIGNAL(TakeImage_abort()));
       }
       // ----------
 
@@ -272,6 +274,19 @@ AssemblyAssemblyV2View::AssemblyAssemblyV2View(const AssemblyAssemblyV2* const a
   }
   // ----------
 
+  // step: Take an image
+  {
+    ++assembly_step_N;
+
+    AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
+    tmp_wid->label()->setText(QString::number(assembly_step_N));
+    tmp_wid->button()->setText("Take an Image and validate that the Fiducial Marker is within the Image");
+    PSPToBasep_lay->addWidget(tmp_wid);
+
+    tmp_wid->connect_action(assembly, SLOT(TakeImage()), SIGNAL(TakeImage_request()), SIGNAL(TakeImage_abort()));
+  }
+  // ----------
+
   // step: Align MaPSA to Motion Stage
   {
     ++assembly_step_N;
@@ -281,10 +296,10 @@ AssemblyAssemblyV2View::AssemblyAssemblyV2View(const AssemblyAssemblyV2* const a
     AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
     tmp_wid->label()->setText(QString::number(assembly_step_N));
     // tmp_wid->text()->setText("Align MaPSA to Motion Stage (Go to \"Alignment\" Tab and select \"PS-p Sensor\")");
-    tmp_wid->button()->setText("Align MaPSA to Motion Stage (Go to \"Alignment\" Tab and select \"PS-p Sensor\")");
+    tmp_wid->button()->setText("Perform alignment: MaPSA to Motion Stage");
     PSPToBasep_lay->addWidget(tmp_wid);
 
-    tmp_wid->connect_action(assembly, SLOT(switchToAlignmentTab_PSP()), SIGNAL(switchToAlignmentTab_PSP_request()), SIGNAL(switchToAlignmentTab_PSP_abort()));
+    tmp_wid->connect_action(assembly, SLOT(PerformAlignmentPSP()), SIGNAL(perform_alignment_finished()), SIGNAL(perform_alignment_aborted()));
   }
   // ----------
 
@@ -641,6 +656,19 @@ AssemblyAssemblyV2View::AssemblyAssemblyV2View(const AssemblyAssemblyV2* const a
   }
   // ----------
 
+  // step: Take an image
+  {
+    ++assembly_step_N;
+
+    AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
+    tmp_wid->label()->setText(QString::number(assembly_step_N));
+    tmp_wid->button()->setText("Take an Image and validate that the Fiducial Marker is within the Image");
+    PSSToSpacers_lay->addWidget(tmp_wid);
+
+    tmp_wid->connect_action(assembly, SLOT(TakeImage()), SIGNAL(TakeImage_request()), SIGNAL(TakeImage_abort()));
+  }
+  // ----------
+
   // step: Align PS-s to Motion Stage
   {
     ++assembly_step_N;
@@ -650,10 +678,10 @@ AssemblyAssemblyV2View::AssemblyAssemblyV2View(const AssemblyAssemblyV2* const a
     AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
     tmp_wid->label()->setText(QString::number(assembly_step_N));
     // tmp_wid->text()->setText("Align PS-s to Motion Stage (Go to \"Alignment\" Tab and select \"PS-s Sensor\")");
-    tmp_wid->button()->setText("Align PS-s to Motion Stage (Go to \"Alignment\" Tab and select \"PS-s Sensor\")");
+    tmp_wid->button()->setText("Perform alignment: PS-s to Motion Stage");
     PSSToSpacers_lay->addWidget(tmp_wid);
 
-    tmp_wid->connect_action(assembly, SLOT(switchToAlignmentTab_PSS()), SIGNAL(switchToAlignmentTab_PSS_request()), SIGNAL(switchToAlignmentTab_PSS_abort()));
+    tmp_wid->connect_action(assembly, SLOT(PerformAlignmentPSS()), SIGNAL(perform_alignment_finished()), SIGNAL(perform_alignment_aborted()));
   }
   // ----------
 
@@ -1046,6 +1074,19 @@ AssemblyAssemblyV2View::AssemblyAssemblyV2View(const AssemblyAssemblyV2* const a
   }
   // ----------
 
+  // step: Take an image
+  {
+    ++assembly_step_N;
+
+    AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
+    tmp_wid->label()->setText(QString::number(assembly_step_N));
+    tmp_wid->button()->setText("Take an Image and validate that the Fiducial Marker is within the Image");
+    PSSToMaPSA_lay->addWidget(tmp_wid);
+
+    tmp_wid->connect_action(assembly, SLOT(TakeImage()), SIGNAL(TakeImage_request()), SIGNAL(TakeImage_abort()));
+  }
+  // ----------
+
   // step: Align MaPSA
   {
     ++assembly_step_N;
@@ -1055,10 +1096,10 @@ AssemblyAssemblyV2View::AssemblyAssemblyV2View(const AssemblyAssemblyV2* const a
     AssemblyAssemblyActionWidget* tmp_wid = new AssemblyAssemblyActionWidget;
     tmp_wid->label()->setText(QString::number(assembly_step_N));
     // tmp_wid->text()->setText("Align MaPSA (Go to \"Alignment\" Tab and select \"PS-p Sensor\")");
-    tmp_wid->button()->setText("Align MaPSA (Go to \"Alignment\" Tab and select \"PS-p Sensor\")");
+    tmp_wid->button()->setText("Perform Alignment: MaPSA to Motion Stage");
     PSSToMaPSA_lay->addWidget(tmp_wid);
 
-    tmp_wid->connect_action(assembly, SLOT(switchToAlignmentTab_PSP()), SIGNAL(switchToAlignmentTab_PSP_request()), SIGNAL(switchToAlignmentTab_PSP_request()));
+    tmp_wid->connect_action(assembly, SLOT(PerformAlignmentPSP()), SIGNAL(perform_alignment_finished()), SIGNAL(perform_alignment_aborted()));
   }
   // ----------
 

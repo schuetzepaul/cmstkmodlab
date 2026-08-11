@@ -215,8 +215,13 @@ protected slots:
   void RegisterPSSPlusSpacersToMaPSAPosition_start();
   void RegisterPSSPlusSpacersToMaPSAPosition_finish();
 
-  void switchToAlignmentTab_PSP();
-  void switchToAlignmentTab_PSS();
+  void PerformAlignmentPSP();
+  void PerformAlignmentPSS();
+
+  void AbortAlignment();
+  void FinishAlignment();
+
+  void TakeImage();
   // ---------
 
  signals:
@@ -352,10 +357,15 @@ protected slots:
   // others
   void RegisterPSSPlusSpacersToMaPSAPosition_finished();
   void RegisterPSSPlusSpacersToMaPSAPosition_abort();
-  void switchToAlignmentTab_PSP_request();
-  void switchToAlignmentTab_PSP_abort();
-  void switchToAlignmentTab_PSS_request();
-  void switchToAlignmentTab_PSS_abort();
+
+  void perform_alignment_PSP_request();
+  void perform_alignment_PSS_request();
+
+  void perform_alignment_aborted();
+  void perform_alignment_finished();
+
+  void TakeImage_request();
+  void TakeImage_abort();
 
   void MaPSA_ID_updated(const QString);
   void PSS_ID_updated(const QString);

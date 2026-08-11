@@ -275,6 +275,7 @@ void AssemblyObjectAligner::run_alignment(const double patrec_dX, const double p
        this->reset_counter_numOfRotations();
 
        emit execution_completed();
+       emit execution_failed();
 
        return;
     }
@@ -614,4 +615,5 @@ void AssemblyObjectAligner::report_alignment_completed() {
     int ret = msgBox->exec();
 
     emit execution_completed();
+    emit execution_successful();
 }

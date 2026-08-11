@@ -2657,42 +2657,82 @@ void AssemblyAssemblyV2::AssemblyCompleted_start()
   emit AssemblyCompleted_finished();
 }
 // ----------------------------------------------------------------------------------------------------
-// switchToAlignmentTab_PSP ------------------------------------------------------------------------------
+// PerformAlignmentPSP ------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------
-void AssemblyAssemblyV2::switchToAlignmentTab_PSP()
+void AssemblyAssemblyV2::PerformAlignmentPSP()
 {
   if(in_action_){
-    reportInAction("switchToAlignmentTab_PSP", SIGNAL(switchToAlignmentTab_PSP_abort()));
+    reportInAction("PerformAlignmentPSP", SIGNAL(perform_alignment_aborted()));
     return;
   }
 
   set_in_action(true);
 
-  NQLog("AssemblyAssemblyV2", NQLog::Spam) << "switchToAlignmentTab_PSP"
-    << ": emitting signal \"switchToAlignmentTab_PSP_request\"";
+  NQLog("AssemblyAssemblyV2", NQLog::Spam) << "PerformAlignmentPSP"
+    << ": emitting signal \"perform_alignment_PSP_request\"";
 
-  emit switchToAlignmentTab_PSP_request(); //Will auto-switch to 'Alignment' sub-tab, and select PSP mode
+  emit perform_alignment_PSP_request(); //Will auto-switch to 'Alignment' sub-tab, select PSP mode and start the alignment
 
   return;
 }
 // ----------------------------------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------------------------------
-// switchToAlignmentTab_PSS ------------------------------------------------------------------------------
+// PerformAlignmentPSS ------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------
-void AssemblyAssemblyV2::switchToAlignmentTab_PSS()
+void AssemblyAssemblyV2::PerformAlignmentPSS()
 {
   if(in_action_){
-    reportInAction("switchToAlignmentTab_PSS", SIGNAL(switchToAlignmentTab_PSS_abort()));
+    reportInAction("PerformAlignmentPSS", SIGNAL(perform_alignment_aborted()));
     return;
   }
 
   set_in_action(true);
 
-  NQLog("AssemblyAssemblyV2", NQLog::Spam) << "switchToAlignmentTab_PSS"
-    << ": emitting signal \"switchToAlignmentTab_PSS_request\"";
+  NQLog("AssemblyAssemblyV2", NQLog::Spam) << "PerformAlignmentPSS"
+    << ": emitting signal \"perform_alignment_PSS_request\"";
 
-  emit switchToAlignmentTab_PSS_request(); //Will auto-switch to 'Alignment' sub-tab, and select PSS mode
+  emit perform_alignment_PSS_request(); //Will auto-switch to 'Alignment' sub-tab, select PSS mode and start the alignment
+
+  return;
+}
+// ----------------------------------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------------------------------
+// AbortAlignment ------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------
+void AssemblyAssemblyV2::AbortAlignment()
+{
+    set_in_action(false);
+    emit perform_alignment_aborted();
+}
+
+// ----------------------------------------------------------------------------------------------------
+// FinishAlignment ------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------
+void AssemblyAssemblyV2::FinishAlignment()
+{
+    emit perform_alignment_finished();
+}
+
+// ----------------------------------------------------------------------------------------------------
+// takeImage ------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------
+void AssemblyAssemblyV2::TakeImage()
+{
+  if(in_action_){
+    reportInAction("TakeImage", SIGNAL(TakeImage_abort()));
+    return;
+  }
+
+  set_in_action(true);
+
+  NQLog("AssemblyAssemblyV2", NQLog::Spam) << "TakeImage"
+    << ": emitting signal \"TakeImage_request\"";
+
+  emit TakeImage_request(); //Will auto-switch to 'Alignment' sub-tab, and select PSS mode
+
+  set_in_action(false);
 
   return;
 }

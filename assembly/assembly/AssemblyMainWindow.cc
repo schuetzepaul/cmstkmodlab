@@ -216,7 +216,7 @@ AssemblyMainWindow::AssemblyMainWindow(const QString& outputdir_path, const QStr
     const QString tabname_Image("Image Viewer");
 
     image_view_ = new AssemblyImageView(assembly_tab);
-    assembly_tab->addTab(image_view_, tabname_Image);
+    idx_image_tab_ = assembly_tab->addTab(image_view_, tabname_Image);
 
     // Thresholder
     thresholder_ = new AssemblyThresholder();
@@ -310,8 +310,17 @@ AssemblyMainWindow::AssemblyMainWindow(const QString& outputdir_path, const QStr
       assemblyV2_view_ = new AssemblyAssemblyV2View(assemblyV2_, assembly_tab);
       assembly_tab->addTab(assemblyV2_view_, tabname_Assembly);
 
-      connect(assemblyV2_, SIGNAL(switchToAlignmentTab_PSP_request()), this, SLOT(update_alignment_tab_psp()));
-      connect(assemblyV2_, SIGNAL(switchToAlignmentTab_PSS_request()), this, SLOT(update_alignment_tab_pss()));
+      connect(assemblyV2_, SIGNAL(perform_alignment_PSP_request()), this, SLOT(perform_alignment_psp()));
+      connect(assemblyV2_, SIGNAL(perform_alignment_PSS_request()), this, SLOT(perform_alignment_pss()));
+
+      connect(aligner_, SIGNAL(execution_successful()), assemblyV2_, SLOT(FinishAlignment()));
+
+      connect(aligner_view_->button_alignerEmergencyStop(), SIGNAL(clicked()), assemblyV2_, SLOT(AbortAlignment()));
+      connect(aligner_view_, SIGNAL(execution_failed()), assemblyV2_, SLOT(AbortAlignment()));
+      connect(image_view_->autofocus_emergencyStop_button(), SIGNAL(clicked()), assemblyV2_, SLOT(AbortAlignment()));
+
+      connect(assemblyV2_, SIGNAL(TakeImage_request()), this, SLOT(select_image_tab()));
+      connect(assemblyV2_, SIGNAL(TakeImage_request()), this, SLOT(get_image()));
 
       NQLog("AssemblyMainWindow", NQLog::Message) << "added view " << tabname_Assembly
          << " (assembly_sequence = " << assembly_sequence << ")";
@@ -446,7 +455,11 @@ AssemblyMainWindow::AssemblyMainWindow(const QString& outputdir_path, const QStr
 
     subassembly_pickup_ = new AssemblySubassemblyPickup(motion_manager_, relayCardManager_, smart_motion_);
 
-    connect(subassembly_pickup_, SIGNAL(switchToAlignmentTab_PSS_request()), this, SLOT(update_alignment_tab_pss()));
+    connect(subassembly_pickup_, SIGNAL(perform_alignment_PSS_request()), this, SLOT(perform_alignment_pss()));
+
+    connect(subassembly_pickup_, SIGNAL(TakeImage_request()), this, SLOT(select_image_tab()));
+    connect(subassembly_pickup_, SIGNAL(TakeImage_request()), this, SLOT(get_image()));
+
 
     toolbox_view_ = new AssemblyToolboxView(motion_manager_, subassembly_pickup_, controls_tab);
     controls_tab->addTab(toolbox_view_, tabname_Toolbox);
@@ -506,6 +519,7 @@ AssemblyMainWindow::AssemblyMainWindow(const QString& outputdir_path, const QStr
     connect(button_mainEmergencyStop_, SIGNAL(clicked()), metrology_view_, SLOT(metrology_abort()));
     connect(button_mainEmergencyStop_, SIGNAL(clicked()), this, SLOT(disconnect_metrology()));
     connect(button_mainEmergencyStop_, SIGNAL(clicked()), this, SLOT(disconnect_multiPickupTest()));
+    connect(button_mainEmergencyStop_, SIGNAL(clicked()), assemblyV2_, SLOT(AbortAlignment()));
 
     QWidget *spacer1 = new QWidget();
     spacer1->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
@@ -1202,11 +1216,15 @@ void AssemblyMainWindow::disconnect_otherSlots()
     disconnect(image_view_, SIGNAL(sigRequestMoveRelative(double,double,double,double)), motion_manager_, SLOT(moveRelative(double,double,double,double)));
     disconnect(motion_manager_, SIGNAL(restartMotionStage_request()), hwctr_view_->LStepExpress_Widget(), SLOT(restart()));
     disconnect(motion_manager_, SIGNAL(restartMotionStage_request()), this, SLOT(messageBox_restartMotionStage()));
-    disconnect(assemblyV2_, SIGNAL(switchToAlignmentTab_PSP_request()), this, SLOT(update_alignment_tab_psp()));
-    disconnect(assemblyV2_, SIGNAL(switchToAlignmentTab_PSS_request()), this, SLOT(update_alignment_tab_pss()));
-    disconnect(subassembly_pickup_, SIGNAL(switchToAlignmentTab_PSS_request()), this, SLOT(update_alignment_tab_pss()));
+    disconnect(assemblyV2_, SIGNAL(perform_alignment_PSP_request()), this, SLOT(perform_alignment_psp()));
+    disconnect(assemblyV2_, SIGNAL(perform_alignment_PSS_request()), this, SLOT(perform_alignment_pss()));
+    disconnect(subassembly_pickup_, SIGNAL(perform_alignment_PSS_request()), this, SLOT(perform_alignment_pss()));
     disconnect(this, SIGNAL(set_alignmentMode_PSP_request()), aligner_view_, SLOT(set_alignmentMode_PSP()));
     disconnect(this, SIGNAL(set_alignmentMode_PSS_request()), aligner_view_, SLOT(set_alignmentMode_PSS()));
+    disconnect(assemblyV2_, SIGNAL(TakeImage_request()), this, SLOT(select_image_tab()));
+    disconnect(assemblyV2_, SIGNAL(TakeImage_request()), this, SLOT(get_image()));
+    disconnect(subassembly_pickup_, SIGNAL(TakeImage_request()), this, SLOT(select_image_tab()));
+    disconnect(subassembly_pickup_, SIGNAL(TakeImage_request()), this, SLOT(get_image()));
 
     return;
 }
@@ -1279,15 +1297,15 @@ void AssemblyMainWindow::quit()
 }
 
 //-- Automatically switch to 'Alignment' sub-tab and emit signal relevant for PSS/PSP
-void AssemblyMainWindow::update_alignment_tab_psp()
+void AssemblyMainWindow::perform_alignment_psp()
 {
-    this->switchAndUpdate_alignment_tab(true);
+    this->switch_tab_and_perform_alignment(true);
 }
-void AssemblyMainWindow::update_alignment_tab_pss()
+void AssemblyMainWindow::perform_alignment_pss()
 {
-    this->switchAndUpdate_alignment_tab(false);
+    this->switch_tab_and_perform_alignment(false);
 }
-void AssemblyMainWindow::switchAndUpdate_alignment_tab(bool psp_mode)
+void AssemblyMainWindow::switch_tab_and_perform_alignment(bool psp_mode)
 {
     // std::cout<<"There are "<<main_tab->count()<<" main tabs"<<std::endl; //Count main tabs
     // QTabWidget* assemblyTab = main_tab->findChild<QTabWidget*>("Module Assembly");
@@ -1300,10 +1318,22 @@ void AssemblyMainWindow::switchAndUpdate_alignment_tab(bool psp_mode)
     assemblyTab->setCurrentIndex(idx_alignment_tab); //Switch to 'Alignment' sub-tab
 
     //Emit signal to set either PSP or PSS alignment mode
-    if(psp_mode) {emit set_alignmentMode_PSP_request();}
-    else {emit set_alignmentMode_PSS_request();}
+    if(psp_mode) {aligner_view_->set_alignmentMode_PSP();}
+    else {aligner_view_->set_alignmentMode_PSS();}
+
+    aligner_view_->transmit_configuration();
 
     return;
+}
+
+void AssemblyMainWindow::select_image_tab()
+{
+    main_tab->setCurrentIndex(idx_module_tab);
+
+    QList<QTabWidget*> widgets = main_tab->findChildren<QTabWidget*>();
+    QTabWidget* assemblyTab = widgets[1];
+
+    assemblyTab->setCurrentIndex(idx_image_tab_);
 }
 
 void AssemblyMainWindow::update_stage_position()

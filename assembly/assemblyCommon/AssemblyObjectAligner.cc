@@ -601,7 +601,7 @@ void AssemblyObjectAligner::report_alignment_completed() {
     if(mediafile.exists()) {
         auto player = new QMediaPlayer;
         player->setMedia(QUrl::fromLocalFile(sound_alignment));
-        player->setVolume(100);
+        player->setVolume(70);
         player->play();
     } else {
         NQLog("AssemblyObjectAligner", NQLog::Message) << "Sound file not found.";

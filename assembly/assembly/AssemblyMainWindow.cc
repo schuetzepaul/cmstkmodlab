@@ -1317,6 +1317,8 @@ void AssemblyMainWindow::switch_tab_and_perform_alignment(bool psp_mode)
 
     assemblyTab->setCurrentIndex(idx_alignment_tab); //Switch to 'Alignment' sub-tab
 
+    aligner_view_->clearResults();
+
     //Emit signal to set either PSP or PSS alignment mode
     if(psp_mode) {aligner_view_->set_alignmentMode_PSP();}
     else {aligner_view_->set_alignmentMode_PSS();}

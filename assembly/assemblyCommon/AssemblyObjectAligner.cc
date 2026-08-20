@@ -424,6 +424,17 @@ void AssemblyObjectAligner::run_alignment(const double patrec_dX, const double p
     if(fabs(abs_distance - design_distance) > 0.05) {
         int retDistance = QMessageBox::NoButton;
         while(retDistance == QMessageBox::NoButton || retDistance == QMessageBox::Help) {
+            auto sound_issue = QString::fromStdString(Config::CMSTkModLabBasePath + "/share/assembly/issue.mp3");
+            auto mediafile = QFile(sound_issue);
+            if(mediafile.exists()) {
+                auto player = new QMediaPlayer;
+                player->setMedia(QUrl::fromLocalFile(sound_issue));
+                player->setVolume(80);
+                player->play();
+            } else {
+                NQLog("AssemblyObjectAligner", NQLog::Message) << "Sound file not found.";
+            }
+
             QMessageBox* msgBoxDistance = new QMessageBox;
             msgBoxDistance->setWindowTitle("Alignment - Problem");
             msgBoxDistance->setText("The distance between the recognised markers does not match the expectations. Please validate that the blue rectangles overlay with the markers and abort the alignment if they don't.");

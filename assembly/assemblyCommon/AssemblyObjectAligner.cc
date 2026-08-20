@@ -596,24 +596,60 @@ void AssemblyObjectAligner::report_alignment_completed() {
     this->reset();
     this->reset_counter_numOfRotations();
 
-    auto sound_alignment = QString::fromStdString(Config::CMSTkModLabBasePath + "/share/assembly/alignment.mp3");
-    auto mediafile = QFile(sound_alignment);
-    if(mediafile.exists()) {
-        auto player = new QMediaPlayer;
-        player->setMedia(QUrl::fromLocalFile(sound_alignment));
-        player->setVolume(70);
-        player->play();
-    } else {
-        NQLog("AssemblyObjectAligner", NQLog::Message) << "Sound file not found.";
+    QMessageBox* msgBoxApprove = new QMessageBox;
+    msgBoxApprove->setText("Please validate that the alignment routine identified the markers correctly (blue rectangles surround the markers).");
+    msgBoxApprove->setInformativeText("Do the blue rectangles overlay with the markers?");
+    msgBoxApprove->setStandardButtons(QMessageBox::No | QMessageBox::Yes);
+
+    auto retApprove = msgBoxApprove->exec();
+
+    switch(retApprove) {
+        case QMessageBox::Yes:
+            {
+                auto sound_alignment = QString::fromStdString(Config::CMSTkModLabBasePath + "/share/assembly/alignment.mp3");
+                auto mediafile = QFile(sound_alignment);
+                if(mediafile.exists()) {
+                    auto player = new QMediaPlayer;
+                    player->setMedia(QUrl::fromLocalFile(sound_alignment));
+                    player->setVolume(70);
+                    player->play();
+                } else {
+                    NQLog("AssemblyObjectAligner", NQLog::Message) << "Sound file not found.";
+                }
+
+                QMessageBox* msgBoxYes = new QMessageBox;
+                msgBoxYes->setInformativeText("Alignment routine completed successfully!");
+
+                msgBoxYes->setStandardButtons(QMessageBox::Ok);
+
+                int retYes = msgBoxYes->exec();
+
+                emit execution_completed();
+                emit execution_successful();
+
+                break;
+            }
+        case QMessageBox::No:
+            {
+                QMessageBox* msgBoxNo = new QMessageBox;
+                msgBoxNo->setText("Please change the light conditions and repeat the alignment.");
+                msgBoxNo->setInformativeText("Consult an expert if the issue persists.");
+
+                msgBoxNo->setStandardButtons(QMessageBox::Ok);
+
+                int retNo = msgBoxNo->exec();
+
+                emit execution_completed();
+                emit execution_failed();
+
+            break;
+            }
+        default:
+            {
+            emit execution_completed();
+            emit execution_failed();
+
+            break;
+            }
     }
-
-    QMessageBox* msgBox = new QMessageBox;
-    msgBox->setInformativeText("Alignment routine completed successfully!");
-
-    msgBox->setStandardButtons(QMessageBox::Ok);
-
-    int ret = msgBox->exec();
-
-    emit execution_completed();
-    emit execution_successful();
 }

@@ -947,6 +947,10 @@ void AssemblyMainWindow::start_objectAligner(const AssemblyObjectAligner::Config
   // once completed, disable connections between controllers used for alignment
   connect(aligner_, SIGNAL(execution_completed()), this, SLOT(disconnect_objectAligner()));
 
+  // if aligner wants to go to results, go to results
+  connect(aligner_, SIGNAL(switch_to_alignment_results_request()), this, SLOT(select_alignment_tab()));
+  connect(aligner_, SIGNAL(switch_to_alignment_results_request()), aligner_view_, SLOT(switch_to_results()));
+
   // kick-start alignment
   connect(aligner_, SIGNAL(configuration_updated()), aligner_, SLOT(execute()));
 
@@ -1005,6 +1009,10 @@ void AssemblyMainWindow::disconnect_objectAligner()
 
   // once completed, disable connections between controllers used for alignment
   disconnect(aligner_, SIGNAL(execution_completed()), this, SLOT(disconnect_objectAligner()));
+
+  // if aligner wants to go to results, go to results
+  disconnect(aligner_, SIGNAL(switch_to_alignment_results_request()), this, SLOT(select_alignment_tab()));
+  disconnect(aligner_, SIGNAL(switch_to_alignment_results_request()), aligner_view_, SLOT(switch_to_results()));
 
   // kick-start alignment
   disconnect(aligner_, SIGNAL(configuration_updated()), aligner_, SLOT(execute()));

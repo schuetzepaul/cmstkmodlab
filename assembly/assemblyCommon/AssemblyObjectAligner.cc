@@ -18,6 +18,7 @@
 
 #include <QMediaPlayer>
 #include <QFile>
+#include <QPushButton>
 
 #include <cmath>
 
@@ -596,12 +597,21 @@ void AssemblyObjectAligner::report_alignment_completed() {
     this->reset();
     this->reset_counter_numOfRotations();
 
-    QMessageBox* msgBoxApprove = new QMessageBox;
-    msgBoxApprove->setText("Please validate that the alignment routine identified the markers correctly (blue rectangles surround the markers).");
-    msgBoxApprove->setInformativeText("Do the blue rectangles overlay with the markers?");
-    msgBoxApprove->setStandardButtons(QMessageBox::No | QMessageBox::Yes);
+    int retApprove = QMessageBox::NoButton;
+    while(retApprove == QMessageBox::NoButton || retApprove == QMessageBox::Help) {
+        QMessageBox* msgBoxApprove = new QMessageBox;
+        msgBoxApprove->setText("Please validate that the alignment routine identified the markers correctly (blue rectangles surround the markers).");
+        msgBoxApprove->setInformativeText("Do the blue rectangles overlay with the markers?");
 
-    auto retApprove = msgBoxApprove->exec();
+        auto show_image_button = msgBoxApprove->addButton(tr("Show Images"), QMessageBox::HelpRole);
+        msgBoxApprove->setStandardButtons(QMessageBox::No | QMessageBox::Yes);
+
+        retApprove = msgBoxApprove->exec();
+
+        if(msgBoxApprove->clickedButton() == show_image_button) {
+            emit switch_to_alignment_results_request();
+        }
+    }
 
     switch(retApprove) {
         case QMessageBox::Yes:

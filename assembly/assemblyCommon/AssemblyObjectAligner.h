@@ -127,8 +127,10 @@ class AssemblyObjectAligner : public QObject
     void execution_completed();
 
     void execution_failed();
-    
+
     void execution_successful();
+
+    void switch_to_alignment_results_request();
 
     void DBLogMessage(const QString);
 };

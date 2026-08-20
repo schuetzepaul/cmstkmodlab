@@ -641,6 +641,7 @@ void AssemblyObjectAligner::report_alignment_completed() {
     int retApprove = QMessageBox::NoButton;
     while(retApprove == QMessageBox::NoButton || retApprove == QMessageBox::Help) {
         QMessageBox* msgBoxApprove = new QMessageBox;
+        msgBoxApprove->setWindowTitle("Approval");
         msgBoxApprove->setText("Please validate that the alignment routine identified the markers correctly (blue rectangles surround the markers).");
         msgBoxApprove->setInformativeText("Do the blue rectangles overlay with the markers?");
 
@@ -669,6 +670,7 @@ void AssemblyObjectAligner::report_alignment_completed() {
                 }
 
                 QMessageBox* msgBoxYes = new QMessageBox;
+                msgBoxYes->setWindowTitle("Success");
                 msgBoxYes->setInformativeText("Alignment routine completed successfully!");
 
                 msgBoxYes->setStandardButtons(QMessageBox::Ok);
@@ -683,6 +685,7 @@ void AssemblyObjectAligner::report_alignment_completed() {
         case QMessageBox::No:
             {
                 QMessageBox* msgBoxNo = new QMessageBox;
+                msgBoxNo->setWindowTitle("Repeat Alignment");
                 msgBoxNo->setText("Please change the light conditions and repeat the alignment.");
                 msgBoxNo->setInformativeText("Consult an expert if the issue persists.");
 

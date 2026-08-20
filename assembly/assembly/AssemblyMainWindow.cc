@@ -317,6 +317,7 @@ AssemblyMainWindow::AssemblyMainWindow(const QString& outputdir_path, const QStr
 
       connect(aligner_view_->button_alignerEmergencyStop(), SIGNAL(clicked()), assemblyV2_, SLOT(AbortAlignment()));
       connect(aligner_view_, SIGNAL(execution_failed()), assemblyV2_, SLOT(AbortAlignment()));
+      connect(aligner_, SIGNAL(execution_failed()), assemblyV2_, SLOT(AbortAlignment()));
       connect(image_view_->autofocus_emergencyStop_button(), SIGNAL(clicked()), assemblyV2_, SLOT(AbortAlignment()));
 
       connect(assemblyV2_, SIGNAL(TakeImage_request()), this, SLOT(select_image_tab()));

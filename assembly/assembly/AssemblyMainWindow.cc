@@ -906,6 +906,9 @@ void AssemblyMainWindow::disconnect_images()
 
 void AssemblyMainWindow::start_objectAligner(const AssemblyObjectAligner::Configuration& conf)
 {
+  NQLog("AssemblyMainWindow", NQLog::Debug) << "start_objectAligner"
+     << ": Starting object aligner";
+
   if(image_ctr_ == nullptr)
   {
     NQLog("AssemblyMainWindow", NQLog::Warning) << "start_objectAligner"

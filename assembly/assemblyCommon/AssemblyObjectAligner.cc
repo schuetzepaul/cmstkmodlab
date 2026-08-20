@@ -638,6 +638,17 @@ void AssemblyObjectAligner::report_alignment_completed() {
     this->reset();
     this->reset_counter_numOfRotations();
 
+    auto sound_alignment = QString::fromStdString(Config::CMSTkModLabBasePath + "/share/assembly/alignment.mp3");
+    auto mediafile = QFile(sound_alignment);
+    if(mediafile.exists()) {
+        auto player = new QMediaPlayer;
+        player->setMedia(QUrl::fromLocalFile(sound_alignment));
+        player->setVolume(70);
+        player->play();
+    } else {
+        NQLog("AssemblyObjectAligner", NQLog::Message) << "Sound file not found.";
+    }
+
     int retApprove = QMessageBox::NoButton;
     while(retApprove == QMessageBox::NoButton || retApprove == QMessageBox::Help) {
         QMessageBox* msgBoxApprove = new QMessageBox;
@@ -658,17 +669,6 @@ void AssemblyObjectAligner::report_alignment_completed() {
     switch(retApprove) {
         case QMessageBox::Yes:
             {
-                auto sound_alignment = QString::fromStdString(Config::CMSTkModLabBasePath + "/share/assembly/alignment.mp3");
-                auto mediafile = QFile(sound_alignment);
-                if(mediafile.exists()) {
-                    auto player = new QMediaPlayer;
-                    player->setMedia(QUrl::fromLocalFile(sound_alignment));
-                    player->setVolume(70);
-                    player->play();
-                } else {
-                    NQLog("AssemblyObjectAligner", NQLog::Message) << "Sound file not found.";
-                }
-
                 QMessageBox* msgBoxYes = new QMessageBox;
                 msgBoxYes->setWindowTitle("Alignment - Success");
                 msgBoxYes->setInformativeText("Alignment routine completed successfully!");

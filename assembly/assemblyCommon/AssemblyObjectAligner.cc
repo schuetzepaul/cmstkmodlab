@@ -409,12 +409,53 @@ void AssemblyObjectAligner::run_alignment(const double patrec_dX, const double p
     posi_x2_ = motion_manager_->get_position_X() + patrec_dX;
     posi_y2_ = motion_manager_->get_position_Y() + patrec_dY;
 
+    double abs_distance = sqrt(pow((posi_x2_ - posi_x1_),2) + pow((posi_y2_ - posi_y1_),2));
+    double design_distance = sqrt(pow(this->configuration().object_deltaX, 2) + pow(this->configuration().object_deltaY, 2));
+
     NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]";
     NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]: position(X1) = " << posi_x1_;
     NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]: position(Y1) = " << posi_y1_;
     NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]";
     NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]: position(X2) = " << posi_x2_;
     NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]: position(Y2) = " << posi_y2_;
+    NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]";
+    NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]: abs_distance = " << abs_distance;
+
+    if(fabs(abs_distance - design_distance) > 0.1) {
+        int retDistance = QMessageBox::NoButton;
+        while(retDistance == QMessageBox::NoButton || retDistance == QMessageBox::Help) {
+            QMessageBox* msgBoxDistance = new QMessageBox;
+            msgBoxDistance->setWindowTitle("Problem");
+            msgBoxDistance->setText("The distance between the recognised markers does not match the expectations. Please validate that the blue rectangles overlay with the markers and abort the alignment if they don't.");
+            msgBoxDistance->setInformativeText("Do the blue rectangles overlay with the markers?");
+
+            auto show_image_button = msgBoxDistance->addButton(tr("Show Images"), QMessageBox::HelpRole);
+
+            msgBoxDistance->setStandardButtons(QMessageBox::No | QMessageBox::Yes);
+
+            retDistance = msgBoxDistance->exec();
+
+            if(msgBoxDistance->clickedButton() == show_image_button) {
+                emit switch_to_alignment_results_request();
+            }
+        }
+
+        if(retDistance == QMessageBox::No) {
+            NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]: User requests abort of alignment.";
+
+            this->reset();
+            this->reset_counter_numOfRotations();
+
+            emit execution_completed();
+            emit execution_failed();
+
+            return;
+        } else if(retDistance == QMessageBox::Yes) {
+            NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]: User requests to continue alignment.";
+        } else {
+            NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]: Received unexpected result from user dialogue.";
+        }
+    }
 
     // measurement of object orientation
     if(posi_x2_ == posi_x1_)

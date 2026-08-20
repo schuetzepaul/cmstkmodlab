@@ -265,7 +265,7 @@ AssemblyMainWindow::AssemblyMainWindow(const QString& outputdir_path, const QStr
     const QString tabname_Alignm("Alignment");
 
     aligner_view_ = new AssemblyObjectAlignerView(assembly_tab);
-    idx_alignment_tab = assembly_tab->addTab(aligner_view_, tabname_Alignm);
+    idx_alignment_tab_ = assembly_tab->addTab(aligner_view_, tabname_Alignm);
 
     // aligner
     aligner_ = new AssemblyObjectAligner(motion_manager_);
@@ -650,8 +650,8 @@ AssemblyMainWindow::AssemblyMainWindow(const QString& outputdir_path, const QStr
 
     main_tab->setTabPosition(QTabWidget::North);
 
-    idx_module_tab = main_tab->addTab(assembly_tab, tr("Module Assembly"));
-    idx_manual_tab = main_tab->addTab(controls_tab, tr("Additional Tools"));
+    idx_module_tab_ = main_tab->addTab(assembly_tab, tr("Module Assembly"));
+    idx_manual_tab_ = main_tab->addTab(controls_tab, tr("Additional Tools"));
 
     assembly_tab->setStyleSheet(assembly_tab->styleSheet()+" QTabBar::tab {width: 300px; }");
     controls_tab->setStyleSheet(controls_tab->styleSheet()+" QTabBar::tab {width: 375px; }");
@@ -1313,13 +1313,13 @@ void AssemblyMainWindow::switch_tab_and_perform_alignment(bool psp_mode)
 {
     // std::cout<<"There are "<<main_tab->count()<<" main tabs"<<std::endl; //Count main tabs
     // QTabWidget* assemblyTab = main_tab->findChild<QTabWidget*>("Module Assembly");
-    main_tab->setCurrentIndex(idx_module_tab);
+    main_tab->setCurrentIndex(idx_module_tab_);
 
     QList<QTabWidget*> widgets = main_tab->findChildren<QTabWidget*>(); //Get main tabs
     QTabWidget* assemblyTab = widgets[1]; //Get 'Module Assembly' main tab
     // std::cout<<"There are "<<assemblyTab->count()<<" sub-tabs"<<std::endl; //Count sub-tabs
 
-    assemblyTab->setCurrentIndex(idx_alignment_tab); //Switch to 'Alignment' sub-tab
+    assemblyTab->setCurrentIndex(idx_alignment_tab_); //Switch to 'Alignment' sub-tab
 
     aligner_view_->clearResults();
 
@@ -1334,7 +1334,7 @@ void AssemblyMainWindow::switch_tab_and_perform_alignment(bool psp_mode)
 
 void AssemblyMainWindow::select_image_tab()
 {
-    main_tab->setCurrentIndex(idx_module_tab);
+    main_tab->setCurrentIndex(idx_module_tab_);
 
     QList<QTabWidget*> widgets = main_tab->findChildren<QTabWidget*>();
     QTabWidget* assemblyTab = widgets[1];

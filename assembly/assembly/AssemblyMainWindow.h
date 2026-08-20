@@ -248,9 +248,9 @@ class AssemblyMainWindow : public QMainWindow
   double testTimerCount_;
   QTimer* liveTimer_;
 
-  int idx_alignment_tab;
-  int idx_module_tab;
-  int idx_manual_tab;
+  int idx_alignment_tab_;
+  int idx_module_tab_;
+  int idx_manual_tab_;
   int idx_image_tab_;
 
   QList<QObject*> camera_blocking_objects_;

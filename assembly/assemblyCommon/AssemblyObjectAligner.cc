@@ -421,11 +421,11 @@ void AssemblyObjectAligner::run_alignment(const double patrec_dX, const double p
     NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]";
     NQLog("AssemblyObjectAligner", NQLog::Message) << "run_alignment: step [" << alignment_step_ << "]: abs_distance = " << abs_distance;
 
-    if(fabs(abs_distance - design_distance) > 0.1) {
+    if(fabs(abs_distance - design_distance) > 0.05) {
         int retDistance = QMessageBox::NoButton;
         while(retDistance == QMessageBox::NoButton || retDistance == QMessageBox::Help) {
             QMessageBox* msgBoxDistance = new QMessageBox;
-            msgBoxDistance->setWindowTitle("Problem");
+            msgBoxDistance->setWindowTitle("Alignment - Problem");
             msgBoxDistance->setText("The distance between the recognised markers does not match the expectations. Please validate that the blue rectangles overlay with the markers and abort the alignment if they don't.");
             msgBoxDistance->setInformativeText("Do the blue rectangles overlay with the markers?");
 
@@ -641,7 +641,7 @@ void AssemblyObjectAligner::report_alignment_completed() {
     int retApprove = QMessageBox::NoButton;
     while(retApprove == QMessageBox::NoButton || retApprove == QMessageBox::Help) {
         QMessageBox* msgBoxApprove = new QMessageBox;
-        msgBoxApprove->setWindowTitle("Approval");
+        msgBoxApprove->setWindowTitle("Alignment - Approval");
         msgBoxApprove->setText("Please validate that the alignment routine identified the markers correctly (blue rectangles surround the markers).");
         msgBoxApprove->setInformativeText("Do the blue rectangles overlay with the markers?");
 
@@ -670,7 +670,7 @@ void AssemblyObjectAligner::report_alignment_completed() {
                 }
 
                 QMessageBox* msgBoxYes = new QMessageBox;
-                msgBoxYes->setWindowTitle("Success");
+                msgBoxYes->setWindowTitle("Alignment - Success");
                 msgBoxYes->setInformativeText("Alignment routine completed successfully!");
 
                 msgBoxYes->setStandardButtons(QMessageBox::Ok);
@@ -685,7 +685,7 @@ void AssemblyObjectAligner::report_alignment_completed() {
         case QMessageBox::No:
             {
                 QMessageBox* msgBoxNo = new QMessageBox;
-                msgBoxNo->setWindowTitle("Repeat Alignment");
+                msgBoxNo->setWindowTitle("Alignment - Repeat Alignment");
                 msgBoxNo->setText("Please change the light conditions and repeat the alignment.");
                 msgBoxNo->setInformativeText("Consult an expert if the issue persists.");
 

@@ -1332,6 +1332,16 @@ void AssemblyMainWindow::switch_tab_and_perform_alignment(bool psp_mode)
     return;
 }
 
+void AssemblyMainWindow::select_alignment_tab()
+{
+    main_tab->setCurrentIndex(idx_module_tab_);
+
+    QList<QTabWidget*> widgets = main_tab->findChildren<QTabWidget*>();
+    QTabWidget* assemblyTab = widgets[1];
+
+    assemblyTab->setCurrentIndex(idx_alignment_tab_);
+}
+
 void AssemblyMainWindow::select_image_tab()
 {
     main_tab->setCurrentIndex(idx_module_tab_);

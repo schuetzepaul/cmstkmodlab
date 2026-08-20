@@ -165,6 +165,8 @@ class AssemblyMainWindow : public QMainWindow
 
   void enable_imageButtons(QObject*);
 
+  void select_alignment_tab();
+
   void select_image_tab();
 
  protected:
